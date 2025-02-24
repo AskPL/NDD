@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор дат</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 30px;
+            background: rgba(40, 40, 40, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #f39c12;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #ffffff;
+            margin: 20px 0 15px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #d0d0d0;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        select, input[type="date"] {
+            background: #333333;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input[type="date"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #f39c12;
+            background: #3a3a3a;
+        }
+
+        button {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #f39c12;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        p {
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .escalation-result {
+            color: #ff6b6b;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Калькулятор дат</h1>
+        <label for="calculatorType">Выберите тип калькулятора:</label>
+        <select id="calculatorType" onchange="toggleCalculator()">
+            <option value="search">Срок поиска</option>
+            <option value="return">Дата возврата</option>
+            <option value="storage">Срок хранения</option>
+        </select>
+
+        <div id="searchCalculator">
+            <h2>Срок поиска</h2>
+            <label>Дата начала:</label>
+            <input type="date" id="searchDate">
+            <div class="checkbox-container">
+                <input type="checkbox" id="escalationCheck" onchange="toggleEscalation()">
+                <label for="escalationCheck">Идет эскалация</label>
+            </div>
+            <div id="escalationSection" class="hidden">
+                <label>Дата начала эскалации:</label>
+                <input type="date" id="escalationDate">
+            </div>
+            <button onclick="calculateSearchEnd()">Рассчитать</button>
+            <p id="searchResult" class="hidden"></p>
+            <p id="escalationResult" class="escalation-result hidden"></p>
+        </div>
+
+        <div id="returnCalculator" class="hidden">
+            <h2>Дата возврата</h2>
+            <label>Дата отправки:</label>
+            <input type="date" id="shippingDate">
+            <label>Оригинальная дата поставки:</label>
+            <input type="date" id="originalDeliveryDate">
+            <label>Дата отмены:</label>
+            <input type="date" id="cancellationDate">
+            <button onclick="calculateReturnDate()">Рассчитать</button>
+            <p id="returnResult" class="hidden"></p>
+        </div>
+
+        <div id="storageCalculator" class="hidden">
+            <h2>Срок хранения</h2>
+            <label>Дата поступления:</label>
+            <input type="date" id="receiptDate">
+            <label>Тип заказа:</label>
+            <select id="storageType">
+                <option value="final">Конечный</option>
+                <option value="final_extended">Конечный продлевали</option>
+                <option value="returnable">Возвратный</option>
+            </select>
+            <button onclick="calculateStorageDate()">Рассчитать</button>
+            <p id="storageResult" class="hidden"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            toggleCalculator();
+        });
+
+        function toggleCalculator() {
+            document.getElementById("searchCalculator").classList.add("hidden");
+            document.getElementById("returnCalculator").classList.add("hidden");
+            document.getElementById("storageCalculator").classList.add("hidden");
+
+            let selected = document.getElementById("calculatorType").value;
+            let selectedElement = document.getElementById(selected + "Calculator");
+            if (selectedElement) {
+                selectedElement.classList.remove("hidden");
+            }
+        }
+
+        function toggleEscalation() {
+            let escalationSection = document.getElementById("escalationSection");
+            escalationSection.classList.toggle("hidden");
+        }
+
+        function calculateSearchEnd() {
+            let searchDate = new Date(document.getElementById("searchDate").value);
+            if (isNaN(searchDate)) return;
+            
+            searchDate.setDate(searchDate.getDate() + 14);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let timeDiff = searchDate - today;
+            let daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            
+            let resultText = "🔍 Поиск закончится: " + formatDate(searchDate);
+            if (daysLeft >= 0) {
+                resultText += `<br>⏳ Осталось дней: ${daysLeft}`;
+            } else {
+                resultText += `<br>⚠️ Срок поиска истек ${Math.abs(daysLeft)} дн. назад`;
+            }
+            
+            // Показываем элемент перед добавлением текста
+            document.getElementById("searchResult").classList.remove("hidden");
+            document.getElementById("searchResult").innerHTML = resultText;
+
+            if (document.getElementById("escalationCheck").checked) {
+                let escalationDate = new Date(document.getElementById("escalationDate").value);
+                if (isNaN(escalationDate)) return;
+                escalationDate.setDate(escalationDate.getDate() + 7);
+                
+                // Показываем элемент эскалации
+                document.getElementById("escalationResult").classList.remove("hidden");
+                document.getElementById("escalationResult").innerHTML = "⚠️ Эскалация закончится: " + formatDate(escalationDate);
+            } else {
+                document.getElementById("escalationResult").classList.add("hidden");
+                document.getElementById("escalationResult").innerText = "";
+            }
+        }
+
+        function calculateReturnDate() {
+            let shipDate = new Date(document.getElementById("shippingDate").value);
+            let originalDeliveryDate = new Date(document.getElementById("originalDeliveryDate").value);
+            let cancellationDate = new Date(document.getElementById("cancellationDate").value);
+
+            if (isNaN(shipDate) || isNaN(originalDeliveryDate) || isNaN(cancellationDate)) {
+                document.getElementById("returnResult").innerText = "❌ Ошибка: Некорректные дата!";
+                document.getElementById("returnResult").classList.remove("hidden");
+                return;
+            }
+
+            let D = (originalDeliveryDate - shipDate) / (1000 * 60 * 60 * 24);
+            let tempDate = new Date(cancellationDate);
+            tempDate.setDate(tempDate.getDate() + D);
+            let returnDate = new Date(tempDate);
+            let workDaysToAdd = 10;
+            let workDaysAdded = 0;
+
+            while (workDaysAdded < workDaysToAdd) {
+                returnDate.setDate(returnDate.getDate() + 1);
+                if (returnDate.getDay() != 0 && returnDate.getDay() != 6) {
+                    workDaysAdded++;
+                }
+            }
+
+            // Показываем элемент перед добавлением текста
+            document.getElementById("returnResult").classList.remove("hidden");
+            document.getElementById("returnResult").innerText = "📅 Срок возврата: До " + formatDate(returnDate);
+        }
+
+        function calculateStorageDate() {
+            let receiptDate = new Date(document.getElementById("receiptDate").value);
+            let type = document.getElementById("storageType").value;
+            if (isNaN(receiptDate)) return;
+            
+            let daysMap = { 'final': 7, 'final_extended': 14, 'returnable': 15 };
+            receiptDate.setDate(receiptDate.getDate() + daysMap[type]);
+            
+            // Показываем элемент перед добавлением текста
+            document.getElementById("storageResult").classList.remove("hidden");
+            document.getElementById("storageResult").innerText = "📦 Заказ уедет: " + formatDate(receiptDate);
+        }
+
+        function formatDate(date) {
+            let options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('ru-RU', options);
+        }
+    </script>
+</body>
+</html>
