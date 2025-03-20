@@ -60,6 +60,36 @@
             box-shadow: 0 10px 30px var(--shadow-color);
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+
+        .home-button {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 44px;
+            height: 44px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .home-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            background-color: var(--accent-color);
+        }
+
+        .home-button span {
+            font-size: 24px;
+            color: white;
         }
 
         h1 {
@@ -372,11 +402,25 @@
             .calculator-tabs {
                 gap: 5px;
             }
+
+            .home-button {
+                top: -40px;
+                width: 38px;
+                height: 38px;
+            }
+
+            .home-button span {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <a href="https://askpl.github.io/NDD/" class="home-button" title="На главную">
+            <span>🏠</span>
+        </a>
+        
         <h1><span class="emoji">📅</span>Калькулятор дат</h1>
 
         <!-- Tabs -->
