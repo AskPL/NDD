@@ -561,64 +561,86 @@
         }
 
         function calculateSearchEnd() {
-            let searchDate = new Date(document.getElementById("searchDate").value);
-            if (isNaN(searchDate)) {
-                showError("searchResult", "Укажите корректную дату начала");
-                return;
-            }
+    let searchDate = new Date(document.getElementById("searchDate").value);
+    if (isNaN(searchDate)) {
+        showError("searchResult", "Укажите корректную дату начала");
+        return;
+    }
 
-            // Срок поиска 14 дней (а не 15)
-            searchDate.setDate(searchDate.getDate() + 14);
-            let today = new Date();
-            today.setHours(0, 0, 0, 0);
+    // Копируем начальную дату поиска для второго расчета
+    let searchStartDate = new Date(searchDate);
+    
+    // Срок поиска 14 дней
+    searchDate.setDate(searchDate.getDate() + 14);
+    
+    // Срок поиска дополнительные 21 день
+    let extendedSearchDate = new Date(searchStartDate);
+    extendedSearchDate.setDate(extendedSearchDate.getDate() + 21);
+    
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-            let timeDiff = searchDate - today;
-            let daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    let timeDiff = searchDate - today;
+    let daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+    
+    let extendedTimeDiff = extendedSearchDate - today;
+    let extendedDaysLeft = Math.ceil(extendedTimeDiff / (1000 * 60 * 60 * 24));
 
-            let resultHtml = '<div class="result-line"><span class="emoji">🔍</span><span>Поиск закончится: <strong>' + formatDate(searchDate) + '</strong></span></div>';
-            
-            if (daysLeft > 0) {
-                resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong class="success-text">' + daysLeft + '</strong></span></div>';
-            } else if (daysLeft === 0) {
-                resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Поиск <strong class="warning-text">заканчивается сегодня</strong></span></div>';
-            } else {
-                resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок поиска <strong class="expired-text">истек ' + Math.abs(daysLeft) + ' дн. назад</strong></span></div>';
-            }
+    let resultHtml = '<div class="result-line"><span class="emoji">🔍</span><span>Поиск закончится (14 дней): <strong>' + formatDate(searchDate) + '</strong></span></div>';
+    
+    if (daysLeft > 0) {
+        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong class="success-text">' + daysLeft + '</strong></span></div>';
+    } else if (daysLeft === 0) {
+        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Поиск <strong class="warning-text">заканчивается сегодня</strong></span></div>';
+    } else {
+        resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок поиска <strong class="expired-text">истек ' + Math.abs(daysLeft) + ' дн. назад</strong></span></div>';
+    }
+    
+    // Добавляем информацию о 21-дневном сроке
+    resultHtml += '<div class="result-line"><span class="emoji">🔎</span><span>Дополнительный срок (21 день): <strong>' + formatDate(extendedSearchDate) + '</strong></span></div>';
+    
+    if (extendedDaysLeft > 0) {
+        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong class="success-text">' + extendedDaysLeft + '</strong></span></div>';
+    } else if (extendedDaysLeft === 0) {
+        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Дополнительный срок <strong class="warning-text">заканчивается сегодня</strong></span></div>';
+    } else {
+        resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Дополнительный срок <strong class="expired-text">истек ' + Math.abs(extendedDaysLeft) + ' дн. назад</strong></span></div>';
+    }
 
-            // Показываем результат
-            document.getElementById("searchResult").classList.remove("hidden");
-            document.getElementById("searchResult").innerHTML = resultHtml;
+    // Показываем результат
+    document.getElementById("searchResult").classList.remove("hidden");
+    document.getElementById("searchResult").innerHTML = resultHtml;
 
-            if (document.getElementById("escalationCheck").checked) {
-                let escalationDate = new Date(document.getElementById("escalationDate").value);
-                if (isNaN(escalationDate)) {
-                    showError("escalationResult", "Укажите корректную дату эскалации");
-                    return;
-                }
-                
-                // Эскалация 7 дней (а не 8)
-                escalationDate.setDate(escalationDate.getDate() + 7);
-                
-                let escalationTimeDiff = escalationDate - today;
-                let escalationDaysLeft = Math.ceil(escalationTimeDiff / (1000 * 60 * 60 * 24));
-                
-                let escalationHtml = '<div class="result-line"><span class="emoji">⚠️</span><span>Эскалация закончится: <strong>' + formatDate(escalationDate) + '</strong></span></div>';
-                
-                if (escalationDaysLeft > 0) {
-                    escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong>' + escalationDaysLeft + '</strong></span></div>';
-                } else if (escalationDaysLeft === 0) {
-                    escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Эскалация <strong>заканчивается сегодня</strong></span></div>';
-                } else {
-                    escalationHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок эскалации <strong class="expired-text">истек ' + Math.abs(escalationDaysLeft) + ' дн. назад</strong></span></div>';
-                }
-
-                // Показываем результат эскалации
-                document.getElementById("escalationResult").classList.remove("hidden");
-                document.getElementById("escalationResult").innerHTML = escalationHtml;
-            } else {
-                document.getElementById("escalationResult").classList.add("hidden");
-            }
+    if (document.getElementById("escalationCheck").checked) {
+        let escalationDate = new Date(document.getElementById("escalationDate").value);
+        if (isNaN(escalationDate)) {
+            showError("escalationResult", "Укажите корректную дату эскалации");
+            return;
         }
+        
+        // Эскалация 7 дней (а не 8)
+        escalationDate.setDate(escalationDate.getDate() + 7);
+        
+        let escalationTimeDiff = escalationDate - today;
+        let escalationDaysLeft = Math.ceil(escalationTimeDiff / (1000 * 60 * 60 * 24));
+        
+        let escalationHtml = '<div class="result-line"><span class="emoji">⚠️</span><span>Эскалация закончится: <strong>' + formatDate(escalationDate) + '</strong></span></div>';
+        
+        if (escalationDaysLeft > 0) {
+            escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong>' + escalationDaysLeft + '</strong></span></div>';
+        } else if (escalationDaysLeft === 0) {
+            escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Эскалация <strong>заканчивается сегодня</strong></span></div>';
+        } else {
+            escalationHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок эскалации <strong class="expired-text">истек ' + Math.abs(escalationDaysLeft) + ' дн. назад</strong></span></div>';
+        }
+
+        // Показываем результат эскалации
+        document.getElementById("escalationResult").classList.remove("hidden");
+        document.getElementById("escalationResult").innerHTML = escalationHtml;
+    } else {
+        document.getElementById("escalationResult").classList.add("hidden");
+    }
+}
 
         function calculateReturnDate() {
             let shipDate = new Date(document.getElementById("shippingDate").value);
