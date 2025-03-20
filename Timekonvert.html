@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер даты</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Основная цветовая схема - оттенки оранжевого */
+            --primary-color: #FF9800; /* Оранжевый */
+            --primary-dark: #F57C00;  /* Темно-оранжевый */
+            --primary-light: #FFE0B2; /* Светло-оранжевый */
+            --accent-color: #FF5722;  /* Ярко-оранжевый */
+            --error-color: #F44336;   /* Красный */
+            --success-color: #4CAF50; /* Зеленый */
+            --warning-color: #FFC107; /* Желтый */
+            
+            /* Темная тема */
+            --bg-color: #121212;       /* Очень темный серый */
+            --card-bg-color: #1E1E1E;  /* Темно-серый */
+            --input-bg-color: #2C2C2C; /* Серый */
+            --border-color: #424242;   /* Светло-серый */
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            
+            /* Текст */
+            --text-primary: #FFFFFF;   /* Белый */
+            --text-secondary: #B0B0B0; /* Светло-серый */
+            --text-accent: #90CAF9;    /* Светло-голубой */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 152, 0, 0.05) 0%, transparent 90%);
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px 30px 30px;
+            background-color: var(--card-bg-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1 .emoji {
+            margin-right: 10px;
+            font-size: 32px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group:focus-within label {
+            color: var(--primary-color);
+        }
+
+        input {
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3);
+        }
+
+        .result-card {
+            margin: 25px 0 10px;
+            padding: 20px;
+            background-color: rgba(255, 152, 0, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            line-height: 1.6;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+            word-break: break-word;
+        }
+
+        .result-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .result-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-line .emoji {
+            margin-right: 10px;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-text {
+            color: var(--error-color);
+            font-weight: 500;
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Адаптивный дизайн */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+            
+            .result-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="emoji">🕒</span>Конвертер формата даты</h1>
+        
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <a href="https://askpl.github.io/NDD/DateCalculatorPro2000V2.html" target="_blank" title="Перейти к DateCalculatorPro2000V2">
+                <div style="width: 38px; height: 38px; background-color: var(--primary-color); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease;">
+                    <span style="font-size: 20px;">📅</span>
+                </div>
+            </a>
+        </div>
+        
+        <div class="form-group">
+            <label for="inputDate">Введите дату в любом формате:</label>
+            <input type="text" id="inputDate" 
+                placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025, и т.д.">
+        </div>
+        
+        <button onclick="convertDate()">Конвертировать</button>
+        
+        <div id="result" class="result-card hidden"></div>
+    </div>
+
+    <script>
+        function convertDate() {
+            try {
+                const input = document.getElementById('inputDate').value.trim();
+                if (!input) {
+                    showError("Пожалуйста, введите дату");
+                    return;
+                }
+
+                let date, time, day, month, year;
+                
+                // Различные паттерны ввода
+                
+                // 1. HH:mm:ss DD.MM.YY
+                if (/^\d{1,2}:\d{1,2}(:\d{1,2})?\s+\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    const [timePart, datePart] = input.split(/\s+/);
+                    time = timePart.split(':');
+                    [day, month, year] = datePart.split('.');
+                }
+                // 2. DD.MM.YYYY
+                else if (/^\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('.');
+                    time = ["00", "00"];
+                }
+                // 3. DD/MM/YYYY
+                else if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('/');
+                    time = ["00", "00"];
+                }
+                // 4. YYYY-MM-DD
+                else if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(input)) {
+                    [year, month, day] = input.split('-');
+                    time = ["00", "00"];
+                }
+                // 5. Словесное описание (например, "4 марта 2025")
+                else if (/^\d{1,2}\s+[а-яА-Я]+\s+\d{4}$/.test(input)) {
+                    const parts = input.split(/\s+/);
+                    day = parts[0];
+                    
+                    const monthNames = {
+                        'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
+                        'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
+                        'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
+                    };
+                    
+                    month = monthNames[parts[1].toLowerCase()];
+                    if (!month) {
+                        showError("Некорректное название месяца");
+                        return;
+                    }
+                    
+                    year = parts[2];
+                    time = ["00", "00"];
+                }
+                // Если ничего не подошло, пробуем через Date.parse
+                else {
+                    try {
+                        date = new Date(input);
+                        if (isNaN(date.getTime())) {
+                            throw new Error("Неверный формат даты");
+                        }
+                        day = date.getDate();
+                        month = date.getMonth() + 1;
+                        year = date.getFullYear();
+                        time = [date.getHours().toString().padStart(2, '0'), 
+                                date.getMinutes().toString().padStart(2, '0')];
+                    } catch (e) {
+                        showError("Невозможно распознать формат даты. Попробуйте один из примеров: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025");
+                        return;
+                    }
+                }
+                
+                // Нормализация года
+                if (year && year.length === 2) {
+                    year = '20' + year;
+                }
+                
+                // Преобразуем строковые значения в числа
+                day = parseInt(day, 10);
+                month = parseInt(month, 10);
+                year = parseInt(year, 10);
+                
+                // Проверка валидности даты
+                if (month < 1 || month > 12 || day < 1 || day > 31) {
+                    showError("Некорректная дата. Убедитесь, что месяц от 1 до 12, день от 1 до 31");
+                    return;
+                }
+                
+                // Создаем объект Date для проверки валидности
+                date = new Date(year, month - 1, day);
+                if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+                    showError("Некорректная дата (например, 31 февраля не существует)");
+                    return;
+                }
+                
+                const months = [
+                    'января', 'февраля', 'марта', 
+                    'апреля', 'мая', 'июня',
+                    'июля', 'августа', 'сентября', 
+                    'октября', 'ноября', 'декабря'
+                ];
+                
+                // Форматируем результат
+                let formattedDate;
+                if (time && time.length >= 2 && time[0] !== "00" && time[1] !== "00") {
+                    formattedDate = `${day} ${months[month-1]} ${year} в ${time[0]}:${time[1]}`;
+                } else {
+                    formattedDate = `${day} ${months[month-1]} ${year}`;
+                }
+                
+                showResult(formattedDate, {day, month, year, time});
+            } catch (e) {
+                showError("Ошибка формата! Пример: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025");
+                console.error(e);
+            }
+        }
+        
+        function showResult(formattedDate, details) {
+            const resultElement = document.getElementById("result");
+            
+            let resultHtml = `
+                <div class="result-line">
+                    <span class="emoji">📅</span>
+                    <span><strong>${formattedDate}</strong></span>
+                </div>`;
+            
+            // Добавляем подробные данные
+            resultHtml += `
+                <div class="result-line">
+                    <span class="emoji">📋</span>
+                    <span>День: <strong>${details.day}</strong>, Месяц: <strong>${details.month}</strong>, Год: <strong>${details.year}</strong></span>
+                </div>`;
+            
+            resultElement.innerHTML = resultHtml;
+            resultElement.classList.remove("hidden");
+            // Добавляем анимацию
+            resultElement.style.animation = 'none';
+            setTimeout(() => {
+                resultElement.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+        }
+        
+        function showError(message) {
+            const resultElement = document.getElementById("result");
+            resultElement.classList.remove("hidden");
+            resultElement.innerHTML = `
+                <div class="result-line">
+                    <span class="emoji">❌</span>
+                    <span class="error-text">${message}</span>
+                </div>`;
+            
+            // Добавляем анимацию
+            resultElement.style.animation = 'none';
+            setTimeout(() => {
+                resultElement.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+        }
+    </script>
+</body>
+</html>
