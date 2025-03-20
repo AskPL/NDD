@@ -63,50 +63,53 @@
             position: relative;
         }
 
-        .home-button {
+        /* Стили для кнопки назад */
+        .back-button {
             position: absolute;
-            top: -50px;
-            left: 0;
-            width: 44px;
-            height: 44px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
+            top: 20px;
+            left: 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            z-index: 100;
-            text-decoration: none;
+            gap: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .home-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            background-color: var(--accent-color);
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--primary-color);
         }
 
-        .home-button span {
-            font-size: 24px;
-            color: white;
+        .back-button-icon {
+            font-size: 18px;
+        }
+
+        /* Стили для заголовка */
+        .header-container {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 5px;
         }
 
         h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 25px;
             color: var(--text-primary);
-            text-align: center;
-            position: relative;
-            padding-bottom: 15px;
+            display: inline-block;
         }
-
-        /* Убираем полоску под заголовком */
 
         h1 .emoji {
             margin-right: 10px;
-            font-size: 36px;
+            font-size: 32px;
+            vertical-align: middle;
         }
 
         h2 {
@@ -373,6 +376,98 @@
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
+        /* Стили для переключателя-слайдера */
+        .toggle-switch-container {
+            margin-bottom: 20px;
+        }
+
+        .toggle-switch-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Стили для переключателя */
+        .toggle-switch {
+            position: relative;
+            width: 100%;
+            height: 46px;
+            background-color: var(--input-bg-color);
+            border-radius: 23px;
+            display: flex;
+            align-items: center;
+            padding: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        /* Ползунок переключателя */
+        .toggle-switch-slider {
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            width: calc(50% - 4px);
+            height: calc(100% - 6px);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Когда выбран C2C, перемещаем ползунок */
+        .toggle-switch.c2c .toggle-switch-slider {
+            left: calc(50% + 1px);
+        }
+
+        /* Стили для опций внутри переключателя */
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-secondary);
+            z-index: 2;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        /* Стиль для активной опции - белый и жирный */
+        .toggle-switch.avito .toggle-option.avito,
+        .toggle-switch.c2c .toggle-option.c2c {
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Добавляем эффект наведения */
+        .toggle-switch:hover {
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Добавляем эффект нажатия */
+        .toggle-switch:active .toggle-switch-slider {
+            transform: scale(0.97);
+        }
+        
+        /* Добавляем эффект свечения при наведении */
+        .toggle-switch:hover .toggle-switch-slider {
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+        }
+
+        /* Анимация пульсации */
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
         /* Адаптивный дизайн */
         @media (max-width: 600px) {
             .container {
@@ -380,9 +475,24 @@
                 border-radius: 12px;
             }
 
-            h1 {
-                font-size: 24px;
+            .back-button {
+                top: 15px;
+                left: 15px;
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+
+            .header-container {
                 margin-bottom: 15px;
+                padding-top: 45px; /* Отступ для кнопки назад на мобильных */
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h1 .emoji {
+                font-size: 24px;
             }
 
             h2 {
@@ -402,27 +512,26 @@
             .calculator-tabs {
                 gap: 5px;
             }
-
-            .home-button {
-                top: -40px;
-                width: 38px;
-                height: 38px;
-            }
-
-            .home-button span {
-                font-size: 20px;
+            
+            .toggle-option {
+                font-size: 13px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="https://askpl.github.io/NDD/" class="home-button" title="На главную">
-            <span>🏠</span>
+        <!-- Кнопка назад с абсолютным позиционированием -->
+        <a href="https://askpl.github.io/NDD/" class="back-button" title="Вернуться назад">
+            <span class="back-button-icon">←</span>
+            <span>Назад</span>
         </a>
         
-        <h1><span class="emoji">📅</span>Калькулятор дат</h1>
-
+        <!-- Заголовок центрирован в своем контейнере -->
+        <div class="header-container">
+            <h1><span class="emoji">📅</span>Калькулятор дат</h1>
+        </div>
+        
         <!-- Tabs -->
         <div class="calculator-tabs">
             <button class="tab-button active" data-index="0" data-tab="search" onclick="showCalculator('search')">СРОК ПОИСКА</button>
@@ -432,6 +541,20 @@
 
         <div id="searchCalculator">
             <h2>Срок поиска</h2>
+            
+            <!-- Переключатель типа поиска (слайдер) -->
+            <div class="toggle-switch-container">
+                <label class="toggle-switch-label">Тип поиска:</label>
+                <div class="toggle-switch avito" id="searchTypeToggle">
+                    <div class="toggle-switch-slider"></div>
+                    <div class="toggle-option avito">Авито (14 дней)</div>
+                    <div class="toggle-option c2c">C2C (35 дней)</div>
+                    <!-- Скрытые радиокнопки для совместимости с существующим кодом -->
+                    <input type="radio" name="searchType" value="avito" checked style="display: none;" id="avitoRadio">
+                    <input type="radio" name="searchType" value="c2c" style="display: none;" id="c2cRadio">
+                </div>
+            </div>
+            
             <div class="form-group">
                 <label for="searchDate">Дата начала:</label>
                 <div class="date-picker-wrap">
@@ -523,6 +646,30 @@
             });
             
             showCalculator('search'); // По умолчанию показываем калькулятор поиска
+            
+            // Обработчик для слайдера-переключателя
+            const toggleSwitch = document.getElementById('searchTypeToggle');
+            const avitoRadio = document.getElementById('avitoRadio');
+            const c2cRadio = document.getElementById('c2cRadio');
+            
+            toggleSwitch.addEventListener('click', function() {
+                // Переключаем класс для анимации слайдера
+                if (this.classList.contains('avito')) {
+                    this.classList.remove('avito');
+                    this.classList.add('c2c');
+                    c2cRadio.checked = true;
+                } else {
+                    this.classList.remove('c2c');
+                    this.classList.add('avito');
+                    avitoRadio.checked = true;
+                }
+                
+                // Добавляем эффект пульсации при клике
+                this.querySelector('.toggle-switch-slider').style.animation = 'none';
+                setTimeout(() => {
+                    this.querySelector('.toggle-switch-slider').style.animation = 'pulse 0.4s ease';
+                }, 10);
+            });
         });
 
         function showCalculator(calculatorId) {
@@ -561,86 +708,92 @@
         }
 
         function calculateSearchEnd() {
-    let searchDate = new Date(document.getElementById("searchDate").value);
-    if (isNaN(searchDate)) {
-        showError("searchResult", "Укажите корректную дату начала");
-        return;
-    }
+            let searchDate = new Date(document.getElementById("searchDate").value);
+            if (isNaN(searchDate)) {
+                showError("searchResult", "Укажите корректную дату начала");
+                return;
+            }
 
-    // Копируем начальную дату поиска для второго расчета
-    let searchStartDate = new Date(searchDate);
-    
-    // Срок поиска 14 дней
-    searchDate.setDate(searchDate.getDate() + 14);
-    
-    // Срок поиска дополнительные 21 день
-    let extendedSearchDate = new Date(searchStartDate);
-    extendedSearchDate.setDate(extendedSearchDate.getDate() + 21);
-    
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
+            // Копируем начальную дату поиска
+            let searchStartDate = new Date(searchDate);
+            
+            // Определяем выбранный тип поиска
+            let searchType = document.querySelector('input[name="searchType"]:checked').value;
+            
+            // Расчет сроков в зависимости от типа поиска
+            let daysToAdd = (searchType === "avito") ? 14 : 35; // 14 для Авито, 35 для C2C
+            
+            // Рассчитываем дату окончания поиска
+            let endSearchDate = new Date(searchStartDate);
+            endSearchDate.setDate(endSearchDate.getDate() + daysToAdd);
+            
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-    let timeDiff = searchDate - today;
-    let daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-    
-    let extendedTimeDiff = extendedSearchDate - today;
-    let extendedDaysLeft = Math.ceil(extendedTimeDiff / (1000 * 60 * 60 * 24));
+            let timeDiff = endSearchDate - today;
+            let daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
-    let resultHtml = '<div class="result-line"><span class="emoji">🔍</span><span>Поиск закончится (14 дней): <strong>' + formatDate(searchDate) + '</strong></span></div>';
-    
-    if (daysLeft > 0) {
-        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong class="success-text">' + daysLeft + '</strong></span></div>';
-    } else if (daysLeft === 0) {
-        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Поиск <strong class="warning-text">заканчивается сегодня</strong></span></div>';
-    } else {
-        resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок поиска <strong class="expired-text">истек ' + Math.abs(daysLeft) + ' дн. назад</strong></span></div>';
-    }
-    
-    // Добавляем информацию о 21-дневном сроке
-    resultHtml += '<div class="result-line"><span class="emoji">🔎</span><span>Дополнительный срок (21 день): <strong>' + formatDate(extendedSearchDate) + '</strong></span></div>';
-    
-    if (extendedDaysLeft > 0) {
-        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong class="success-text">' + extendedDaysLeft + '</strong></span></div>';
-    } else if (extendedDaysLeft === 0) {
-        resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Дополнительный срок <strong class="warning-text">заканчивается сегодня</strong></span></div>';
-    } else {
-        resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Дополнительный срок <strong class="expired-text">истек ' + Math.abs(extendedDaysLeft) + ' дн. назад</strong></span></div>';
-    }
+            // Формируем результат с изменённым порядком строк
+            let resultHtml = '';
+            
+            if (searchType === "avito") {
+                resultHtml += '<div class="result-line"><span class="emoji">🔍</span><span>Тип поиска: <strong>Авито</strong></span></div>';
+                resultHtml += '<div class="result-line"><span class="emoji">📅</span><span>Поиск закончится через 14 дней: <strong>' + formatDate(endSearchDate) + '</strong></span></div>';
+            } else {
+                // Изменённый порядок строк для C2C
+                resultHtml += '<div class="result-line"><span class="emoji">🔍</span><span>Тип поиска: <strong>C2C</strong></span></div>';
+                
+                // Промежуточная дата (21 день) теперь идёт первой
+                let intermediatDate = new Date(searchStartDate);
+                intermediatDate.setDate(intermediatDate.getDate() + 21);
+                resultHtml += '<div class="result-line"><span class="emoji">🔎</span><span>Промежуточный срок (через 21 день): <strong>' + formatDate(intermediatDate) + '</strong></span></div>';
+                
+                // Затем конечная дата (35 дней)
+                resultHtml += '<div class="result-line"><span class="emoji">📅</span><span>Поиск закончится через 35 дней (21+14): <strong>' + formatDate(endSearchDate) + '</strong></span></div>';
+            }
+            
+            if (daysLeft > 0) {
+                resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней до окончания: <strong class="success-text">' + daysLeft + '</strong></span></div>';
+            } else if (daysLeft === 0) {
+                resultHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Поиск <strong class="warning-text">заканчивается сегодня</strong></span></div>';
+            } else {
+                resultHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок поиска <strong class="expired-text">истек ' + Math.abs(daysLeft) + ' дн. назад</strong></span></div>';
+            }
 
-    // Показываем результат
-    document.getElementById("searchResult").classList.remove("hidden");
-    document.getElementById("searchResult").innerHTML = resultHtml;
+            // Показываем результат
+            document.getElementById("searchResult").classList.remove("hidden");
+            document.getElementById("searchResult").innerHTML = resultHtml;
 
-    if (document.getElementById("escalationCheck").checked) {
-        let escalationDate = new Date(document.getElementById("escalationDate").value);
-        if (isNaN(escalationDate)) {
-            showError("escalationResult", "Укажите корректную дату эскалации");
-            return;
+            if (document.getElementById("escalationCheck").checked) {
+                let escalationDate = new Date(document.getElementById("escalationDate").value);
+                if (isNaN(escalationDate)) {
+                    showError("escalationResult", "Укажите корректную дату эскалации");
+                    return;
+                }
+                
+                // Эскалация 7 дней
+                escalationDate.setDate(escalationDate.getDate() + 7);
+                
+                let escalationTimeDiff = escalationDate - today;
+                let escalationDaysLeft = Math.ceil(escalationTimeDiff / (1000 * 60 * 60 * 24));
+                
+                let escalationHtml = '<div class="result-line"><span class="emoji">⚠️</span><span>Эскалация закончится: <strong>' + formatDate(escalationDate) + '</strong></span></div>';
+                
+                if (escalationDaysLeft > 0) {
+                    escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong>' + escalationDaysLeft + '</strong></span></div>';
+                } else if (escalationDaysLeft === 0) {
+                    escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Эскалация <strong>заканчивается сегодня</strong></span></div>';
+                } else {
+                    escalationHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок эскалации <strong class="expired-text">истек ' + Math.abs(escalationDaysLeft) + ' дн. назад</strong></span></div>';
+                }
+
+                // Показываем результат эскалации
+                document.getElementById("escalationResult").classList.remove("hidden");
+                document.getElementById("escalationResult").innerHTML = escalationHtml;
+            } else {
+                document.getElementById("escalationResult").classList.add("hidden");
+            }
         }
-        
-        // Эскалация 7 дней (а не 8)
-        escalationDate.setDate(escalationDate.getDate() + 7);
-        
-        let escalationTimeDiff = escalationDate - today;
-        let escalationDaysLeft = Math.ceil(escalationTimeDiff / (1000 * 60 * 60 * 24));
-        
-        let escalationHtml = '<div class="result-line"><span class="emoji">⚠️</span><span>Эскалация закончится: <strong>' + formatDate(escalationDate) + '</strong></span></div>';
-        
-        if (escalationDaysLeft > 0) {
-            escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Осталось дней: <strong>' + escalationDaysLeft + '</strong></span></div>';
-        } else if (escalationDaysLeft === 0) {
-            escalationHtml += '<div class="result-line"><span class="emoji">⏳</span><span>Эскалация <strong>заканчивается сегодня</strong></span></div>';
-        } else {
-            escalationHtml += '<div class="result-line"><span class="emoji">⚠️</span><span>Срок эскалации <strong class="expired-text">истек ' + Math.abs(escalationDaysLeft) + ' дн. назад</strong></span></div>';
-        }
-
-        // Показываем результат эскалации
-        document.getElementById("escalationResult").classList.remove("hidden");
-        document.getElementById("escalationResult").innerHTML = escalationHtml;
-    } else {
-        document.getElementById("escalationResult").classList.add("hidden");
-    }
-}
 
         function calculateReturnDate() {
             let shipDate = new Date(document.getElementById("shippingDate").value);
