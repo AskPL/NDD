@@ -63,48 +63,49 @@
             position: relative;
         }
 
-        .home-button {
+        /* Стили для кнопки назад */
+        .back-button {
             position: absolute;
-            top: -50px;
-            left: 0;
-            width: 44px;
-            height: 44px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
+            top: 20px;
+            left: 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            z-index: 100;
-            text-decoration: none;
+            gap: 6px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .home-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            background-color: var(--accent-color);
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--primary-color);
         }
 
-        .home-button span {
-            font-size: 24px;
-            color: white;
+        /* Стили для заголовка */
+        .header-container {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 35px;
         }
 
         h1 {
             font-size: 28px;
             font-weight: 700;
-            margin-bottom: 25px;
             color: var(--text-primary);
-            text-align: center;
-            position: relative;
-            padding-bottom: 15px;
+            display: inline-block;
         }
 
         h1 .emoji {
             margin-right: 10px;
             font-size: 32px;
+            vertical-align: middle;
         }
 
         label {
@@ -186,6 +187,30 @@
             box-shadow: 0 3px 10px rgba(255, 152, 0, 0.3);
         }
 
+        /* Стили для чекбокса */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline;
+        }
+
         .result-card {
             margin: 25px 0 10px;
             padding: 20px;
@@ -238,39 +263,51 @@
                 border-radius: 12px;
             }
 
+            .back-button {
+                top: 15px;
+                left: 15px;
+                padding: 5px 8px;
+                font-size: 12px;
+            }
+
+            .header-container {
+                margin-bottom: 15px;
+                padding-top: 40px;
+            }
+
             h1 {
                 font-size: 22px;
-                margin-bottom: 15px;
             }
             
             .result-card {
                 padding: 15px;
-            }
-
-            .home-button {
-                top: -40px;
-                width: 38px;
-                height: 38px;
-            }
-
-            .home-button span {
-                font-size: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="https://askpl.github.io/NDD/" class="home-button" title="На главную">
-            <span>🏠</span>
+        <!-- Кнопка "Назад" -->
+        <a href="https://askpl.github.io/NDD/" class="back-button" title="Вернуться назад">
+            <span>←</span>
+            <span>Назад</span>
         </a>
         
-        <h1><span class="emoji">🕒</span>Конвертер формата даты</h1>
+        <!-- Заголовок с отступом сверху -->
+        <div class="header-container">
+            <h1><span class="emoji">🕒</span>Конвертер формата даты</h1>
+        </div>
         
         <div class="form-group">
             <label for="inputDate">Введите дату в любом формате:</label>
             <input type="text" id="inputDate" 
                 placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025, и т.д.">
+        </div>
+        
+        <!-- Галочка "Оставить год" -->
+        <div class="checkbox-container">
+            <input type="checkbox" id="includeYearCheck">
+            <label for="includeYearCheck" class="checkbox-label">Оставить год</label>
         </div>
         
         <button onclick="convertDate()">Конвертировать</button>
@@ -287,6 +324,9 @@
                     return;
                 }
 
+                // Проверяем статус чекбокса "Оставить год"
+                const includeYear = document.getElementById('includeYearCheck').checked;
+                
                 let date, time, day, month, year;
                 
                 // Различные паттерны ввода
@@ -380,22 +420,26 @@
                     'октября', 'ноября', 'декабря'
                 ];
                 
-                // Форматируем результат
+                // Форматируем результат с учетом параметра includeYear
                 let formattedDate;
                 if (time && time.length >= 2 && time[0] !== "00" && time[1] !== "00") {
-                    formattedDate = `${day} ${months[month-1]} ${year} в ${time[0]}:${time[1]}`;
+                    formattedDate = includeYear 
+                        ? `${day} ${months[month-1]} ${year} в ${time[0]}:${time[1]}`
+                        : `${day} ${months[month-1]} в ${time[0]}:${time[1]}`;
                 } else {
-                    formattedDate = `${day} ${months[month-1]} ${year}`;
+                    formattedDate = includeYear 
+                        ? `${day} ${months[month-1]} ${year}`
+                        : `${day} ${months[month-1]}`;
                 }
                 
-                showResult(formattedDate, {day, month, year, time});
+                showResult(formattedDate, {day, month, year, time}, includeYear);
             } catch (e) {
                 showError("Ошибка формата! Пример: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025");
                 console.error(e);
             }
         }
         
-        function showResult(formattedDate, details) {
+        function showResult(formattedDate, details, includeYear) {
             const resultElement = document.getElementById("result");
             
             let resultHtml = `
@@ -404,11 +448,16 @@
                     <span><strong>${formattedDate}</strong></span>
                 </div>`;
             
-            // Добавляем подробные данные
+            // Добавляем подробные данные с учетом параметра includeYear
+            let detailsHtml = `День: <strong>${details.day}</strong>, Месяц: <strong>${details.month}</strong>`;
+            if (includeYear) {
+                detailsHtml += `, Год: <strong>${details.year}</strong>`;
+            }
+            
             resultHtml += `
                 <div class="result-line">
                     <span class="emoji">📋</span>
-                    <span>День: <strong>${details.day}</strong>, Месяц: <strong>${details.month}</strong>, Год: <strong>${details.year}</strong></span>
+                    <span>${detailsHtml}</span>
                 </div>`;
             
             resultElement.innerHTML = resultHtml;
