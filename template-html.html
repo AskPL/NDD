@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NDD - Заголовок страницы</title>
+    <!-- Основные шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Подключение единого файла стилей -->
+    <link rel="stylesheet" href="ndd-styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Кнопка назад с абсолютным позиционированием -->
+        <a href="https://askpl.github.io/NDD/" class="back-button" title="Вернуться назад">
+            <span>←</span>
+            <span>Назад</span>
+        </a>
+        
+        <!-- Заголовок центрирован в своем контейнере -->
+        <div class="header-container">
+            <h1><span class="emoji">🔧</span>Название инструмента</h1>
+        </div>
+        
+        <!-- Основное содержимое страницы -->
+        <div class="main-content">
+            <!-- Пример формы -->
+            <div class="form-group">
+                <label for="sampleInput">Поле ввода:</label>
+                <input type="text" id="sampleInput" placeholder="Введите данные...">
+            </div>
+            
+            <!-- Пример кнопки -->
+            <button onclick="processData()">Обработать</button>
+            
+            <!-- Блок для результатов -->
+            <div id="result" class="result-card hidden">
+                <!-- Результаты будут добавлены JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Необязательный подвал -->
+        <footer>
+            <p class="footer-text">© 2025 NDD Инструменты</p>
+        </footer>
+    </div>
+
+    <script>
+        // Пример функции для обработки данных
+        function processData() {
+            const input = document.getElementById('sampleInput').value.trim();
+            const resultElement = document.getElementById('result');
+            
+            if (!input) {
+                showError("Пожалуйста, введите данные");
+                return;
+            }
+            
+            // Пример формирования результата
+            let resultHtml = `
+                <div class="result-line">
+                    <span class="emoji">✅</span>
+                    <span>Обработанные данные: <strong>${input}</strong></span>
+                </div>`;
+            
+            // Показываем результат
+            resultElement.innerHTML = resultHtml;
+            resultElement.classList.remove("hidden");
+            
+            // Добавляем анимацию
+            resultElement.style.animation = 'none';
+            setTimeout(() => {
+                resultElement.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+        }
+        
+        // Функция для отображения ошибки
+        function showError(message) {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `
+                <div class="result-line">
+                    <span class="emoji">❌</span>
+                    <span class="error-text">${message}</span>
+                </div>`;
+            
+            resultElement.classList.remove("hidden");
+            
+            // Добавляем анимацию
+            resultElement.style.animation = 'none';
+            setTimeout(() => {
+                resultElement.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+        }
+    </script>
+</body>
+</html>
