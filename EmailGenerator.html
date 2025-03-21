@@ -22,11 +22,13 @@
             border-left: 4px solid var(--primary-color);
             max-height: 300px;
             overflow-y: auto;
+            position: relative;
         }
         
         .copy-button {
             position: absolute;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background-color: var(--primary-color);
             color: white;
             border: none;
@@ -34,8 +36,8 @@
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
-            margin-top: 5px;
             transition: background-color 0.3s;
+            z-index: 10;
         }
         
         .copy-button:hover {
@@ -47,17 +49,122 @@
             margin-top: 30px;
         }
         
-        .letter-type-options {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
+        .additional-options {
             margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            animation: fadeIn 0.3s ease;
         }
         
-        @media (min-width: 600px) {
-            .letter-type-options {
-                grid-template-columns: 1fr 1fr;
-            }
+        .options-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .option-button {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        
+        .option-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .option-button:hover:not(.active) {
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        
+        .dropdown-container {
+            margin-top: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Трехпозиционный слайдер */
+        .triple-toggle-container {
+            position: relative;
+            width: 100%;
+            height: 46px;
+            margin-bottom: 20px;
+        }
+        
+        .triple-toggle {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background-color: var(--input-bg-color);
+            border-radius: 23px;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+        
+        .triple-toggle-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .triple-toggle-slider {
+            position: absolute;
+            width: calc(33.33% - 4px);
+            height: calc(100% - 6px);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 20px;
+            top: 3px;
+            left: 3px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1;
+        }
+        
+        .triple-toggle.position-1 .triple-toggle-slider {
+            left: 3px;
+        }
+        
+        .triple-toggle.position-2 .triple-toggle-slider {
+            left: calc(33.33% + 1px);
+        }
+        
+        .triple-toggle.position-3 .triple-toggle-slider {
+            left: calc(66.66% + 1px);
+        }
+        
+        .triple-toggle.position-1 .triple-toggle-option:nth-child(1),
+        .triple-toggle.position-2 .triple-toggle-option:nth-child(2),
+        .triple-toggle.position-3 .triple-toggle-option:nth-child(3) {
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Скрываем радиокнопки */
+        .triple-toggle input[type="radio"] {
+            display: none;
         }
     </style>
 </head>
@@ -98,14 +205,26 @@
             </div>
         </div>
         
-        <!-- Слайдер для маршрута -->
+        <!-- Трехпозиционный слайдер для типа запроса -->
         <div class="toggle-switch-container">
             <label class="toggle-switch-label">Тип запроса:</label>
-            <div class="letter-type-options">
-                <button class="tab-button active" data-type="direct" onclick="selectLetterType('direct')">Прямой маршрут</button>
-                <button class="tab-button" data-type="return" onclick="selectLetterType('return')">Возвратный маршрут</button>
-                <button class="tab-button" data-type="video" onclick="selectLetterType('video')">Запрос видео</button>
+            <div class="triple-toggle-container">
+                <div class="triple-toggle position-1" id="requestTypeToggle">
+                    <div class="triple-toggle-slider"></div>
+                    <div class="triple-toggle-option" data-position="1">Прямой маршрут</div>
+                    <div class="triple-toggle-option" data-position="2">Возвратный маршрут</div>
+                    <div class="triple-toggle-option" data-position="3">Запрос видео</div>
+                    <!-- Скрытые радиокнопки -->
+                    <input type="radio" name="requestType" value="direct" checked id="directRadio">
+                    <input type="radio" name="requestType" value="return" id="returnRadio">
+                    <input type="radio" name="requestType" value="video" id="videoRadio">
+                </div>
             </div>
+        </div>
+        
+        <!-- Дополнительные опции (появляются в зависимости от выбранного типа запроса) -->
+        <div id="additionalOptions" class="additional-options hidden">
+            <!-- Содержимое будет добавлено динамически -->
         </div>
         
         <!-- Кнопка генерации -->
@@ -114,14 +233,46 @@
         <!-- Предпросмотр письма -->
         <div class="preview-container hidden" id="letterPreviewContainer">
             <h2>Предпросмотр письма</h2>
-            <button class="copy-button" onclick="copyLetter()">Копировать</button>
-            <div id="letterPreview" class="letter-preview"></div>
+            <div id="letterPreview" class="letter-preview">
+                <button class="copy-button" onclick="copyLetter()">Копировать</button>
+                <!-- Содержимое письма будет добавлено динамически -->
+            </div>
         </div>
     </div>
 
     <script>
         // Глобальные переменные
-        let currentLetterType = 'direct'; // По умолчанию - прямой маршрут
+        let currentRequestType = 'direct'; // По умолчанию - прямой маршрут
+        let currentStatus = null; // Текущий статус (принят/не принят)
+        let currentSubStatus = null; // Текущий подстатус из выпадающего списка
+        
+        // Шаблоны писем - в реальном приложении эти данные можно загружать из файлов
+        const letterTemplates = {
+            direct: {
+                base: "Здравствуйте!\n\nПожалуйста, подтвердите получение заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения заказа\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Если заказ уже выдан, укажите дату выдачи\n\n",
+                accepted: {
+                    "not_accepted_in_system": "Обращаю ваше внимание, что по данным нашей системы заказ {orderNumber}{orderNumberNote} не принят в пункт выдачи.\n\nЕсли заказ фактически получен вами, пожалуйста, примите его системно на вашем терминале или в личном кабинете.\n\n",
+                    "not_accepting": "Мы получили информацию о том, что ваш пункт отказывается принимать заказ {orderNumber}{orderNumberNote}.\n\nПожалуйста, объясните причину отказа и предоставьте фото заказа для подтверждения его состояния.\n\n"
+                },
+                not_accepted: {
+                    "shipping_delay": "Информируем вас о задержке в отгрузке заказа {orderNumber}{orderNumberNote} в ваш пункт выдачи.\n\nПредполагаемая дата доставки: [укажите дату].\n\nПриносим извинения за задержку.\n\n"
+                }
+            },
+            return: {
+                base: "Здравствуйте!\n\nПожалуйста, подтвердите получение возвратного заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения возврата\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Дата планируемой отправки возврата\n\n"
+            },
+            video: {
+                base: "Здравствуйте!\n\nПожалуйста, предоставьте видеоматериалы о заказе {orderNumber}{orderNumberNote}, полученном в пункт выдачи по адресу: {pvzAddress}.\n\nНам необходимы:\n1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n2. Фото бирки заказа (если доступно)\n3. Информация о текущем статусе заказа\n\n"
+            },
+            footer: "Согласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае их утери вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\nНе меняйте, пожалуйста, тему сообщения при отправке ответа."
+        };
+        
+        // Темы писем
+        const letterSubjects = {
+            direct: "Прямой маршрут. Запрос информации {orderNumber}",
+            return: "Возвратный маршрут. Запрос информации {orderNumber}",
+            video: "Запрос видеоматериалов {orderNumber}"
+        };
         
         // Инициализация при загрузке документа
         document.addEventListener("DOMContentLoaded", function() {
@@ -149,25 +300,130 @@
                     slider.style.animation = 'pulse 0.4s ease';
                 }, 10);
             });
+            
+            // Инициализация трехпозиционного слайдера для типа запроса
+            const requestTypeToggle = document.getElementById('requestTypeToggle');
+            const directRadio = document.getElementById('directRadio');
+            const returnRadio = document.getElementById('returnRadio');
+            const videoRadio = document.getElementById('videoRadio');
+            
+            requestTypeToggle.querySelectorAll('.triple-toggle-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const position = this.getAttribute('data-position');
+                    
+                    // Устанавливаем позицию слайдера
+                    requestTypeToggle.className = 'triple-toggle position-' + position;
+                    
+                    // Проверяем радиокнопку
+                    if (position === '1') {
+                        directRadio.checked = true;
+                        currentRequestType = 'direct';
+                    } else if (position === '2') {
+                        returnRadio.checked = true;
+                        currentRequestType = 'return';
+                    } else if (position === '3') {
+                        videoRadio.checked = true;
+                        currentRequestType = 'video';
+                    }
+                    
+                    // Анимация слайдера
+                    const slider = requestTypeToggle.querySelector('.triple-toggle-slider');
+                    slider.style.animation = 'none';
+                    setTimeout(() => {
+                        slider.style.animation = 'pulse 0.4s ease';
+                    }, 10);
+                    
+                    // Обновляем дополнительные опции
+                    updateAdditionalOptions();
+                });
+            });
+            
+            // Изначально показываем опции для прямого маршрута
+            updateAdditionalOptions();
         });
         
-        // Функция выбора типа письма
-        function selectLetterType(type) {
-            currentLetterType = type;
+        // Функция обновления дополнительных опций в зависимости от типа запроса
+        function updateAdditionalOptions() {
+            const optionsContainer = document.getElementById('additionalOptions');
             
-            // Обновляем активную кнопку
-            const typeButtons = document.querySelectorAll('.letter-type-options .tab-button');
-            typeButtons.forEach(button => {
-                button.classList.remove('active');
-                if (button.dataset.type === type) {
+            // Очищаем содержимое
+            optionsContainer.innerHTML = '';
+            currentStatus = null;
+            currentSubStatus = null;
+            
+            // Показываем опции в зависимости от типа запроса
+            if (currentRequestType === 'direct') {
+                optionsContainer.innerHTML = `
+                    <div class="options-title">Статус доставки:</div>
+                    <div class="option-buttons">
+                        <button class="option-button" onclick="selectStatus('accepted')">Принят</button>
+                        <button class="option-button" onclick="selectStatus('not_accepted')">Не принят</button>
+                    </div>
+                    <div id="subStatusContainer" class="dropdown-container hidden"></div>
+                `;
+                optionsContainer.classList.remove('hidden');
+            } else {
+                // Для других типов запросов пока нет дополнительных опций
+                optionsContainer.classList.add('hidden');
+            }
+        }
+        
+        // Функция выбора статуса (принят/не принят)
+        function selectStatus(status) {
+            currentStatus = status;
+            
+            // Подсвечиваем активную кнопку
+            const buttons = document.querySelectorAll('.option-button');
+            buttons.forEach(button => {
+                if (button.textContent === (status === 'accepted' ? 'Принят' : 'Не принят')) {
                     button.classList.add('active');
-                    // Анимация для активной кнопки
-                    button.style.animation = 'none';
-                    setTimeout(() => {
-                        button.style.animation = 'fadeIn 0.3s ease';
-                    }, 10);
+                } else {
+                    button.classList.remove('active');
                 }
             });
+            
+            // Обновляем подстатусы
+            updateSubStatus();
+        }
+        
+        // Функция обновления подстатусов
+        function updateSubStatus() {
+            const subStatusContainer = document.getElementById('subStatusContainer');
+            
+            if (!currentStatus) {
+                subStatusContainer.classList.add('hidden');
+                return;
+            }
+            
+            subStatusContainer.classList.remove('hidden');
+            
+            if (currentStatus === 'accepted') {
+                subStatusContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="subStatus">Выберите причину:</label>
+                        <select id="subStatus" onchange="setSubStatus(this.value)">
+                            <option value="">-- Выберите --</option>
+                            <option value="not_accepted_in_system">Не принят системно</option>
+                            <option value="not_accepting">Не принимают</option>
+                        </select>
+                    </div>
+                `;
+            } else if (currentStatus === 'not_accepted') {
+                subStatusContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="subStatus">Выберите причину:</label>
+                        <select id="subStatus" onchange="setSubStatus(this.value)">
+                            <option value="">-- Выберите --</option>
+                            <option value="shipping_delay">Задержка отгрузки</option>
+                        </select>
+                    </div>
+                `;
+            }
+        }
+        
+        // Функция установки подстатуса
+        function setSubStatus(subStatus) {
+            currentSubStatus = subStatus;
         }
         
         // Функция генерации письма
@@ -196,52 +452,50 @@
                 return;
             }
             
-            // Генерация письма в зависимости от типа
-            let letterContent = "";
-            let letterSubject = "";
-            
-            // Общее начало для всех писем
-            letterContent += "Здравствуйте!\n\n";
-            
-            // Формируем письмо в зависимости от типа
-            switch (currentLetterType) {
-                case 'direct':
-                    letterSubject = `Прямой маршрут. Запрос информации ${orderNumber}`;
-                    letterContent += `Пожалуйста, подтвердите получение заказа ${orderNumber}${orderNumberNote} в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
-                    letterContent += "Предоставьте следующую информацию:\n";
-                    letterContent += "1. Дата и примерное время получения заказа\n";
-                    letterContent += "2. Фото бирки заказа\n";
-                    letterContent += "3. Статус заказа на данный момент\n";
-                    letterContent += "4. Если заказ уже выдан, укажите дату выдачи\n\n";
-                    break;
-                    
-                case 'return':
-                    letterSubject = `Возвратный маршрут. Запрос информации ${orderNumber}`;
-                    letterContent += `Пожалуйста, подтвердите получение возвратного заказа ${orderNumber}${orderNumberNote} в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
-                    letterContent += "Предоставьте следующую информацию:\n";
-                    letterContent += "1. Дата и примерное время получения возврата\n";
-                    letterContent += "2. Фото бирки заказа\n";
-                    letterContent += "3. Статус заказа на данный момент\n";
-                    letterContent += "4. Дата планируемой отправки возврата\n\n";
-                    break;
-                    
-                case 'video':
-                    letterSubject = `Запрос видеоматериалов ${orderNumber}`;
-                    letterContent += `Пожалуйста, предоставьте видеоматериалы о заказе ${orderNumber}${orderNumberNote}, полученном в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
-                    letterContent += "Нам необходимы:\n";
-                    letterContent += "1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n";
-                    letterContent += "2. Фото бирки заказа (если доступно)\n";
-                    letterContent += "3. Информация о текущем статусе заказа\n\n";
-                    break;
+            // Если для прямого маршрута выбран статус и подстатус требуется, но не выбран
+            if (currentRequestType === 'direct' && currentStatus) {
+                if ((currentStatus === 'accepted' || currentStatus === 'not_accepted') && !currentSubStatus) {
+                    showError("Пожалуйста, выберите причину из выпадающего списка");
+                    return;
+                }
             }
             
-            // Общее завершение для всех писем
-            letterContent += "Согласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае их утери вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\n";
-            letterContent += "Не меняйте, пожалуйста, тему сообщения при отправке ответа.";
+            // Формируем контент и тему письма
+            let letterContent = "";
+            let letterSubject = letterSubjects[currentRequestType].replace('{orderNumber}', orderNumber);
+            
+            // Базовый контент в зависимости от типа запроса
+            letterContent += letterTemplates[currentRequestType].base
+                .replace('{orderNumber}', orderNumber)
+                .replace('{orderNumberNote}', orderNumberNote)
+                .replace('{pvzAddress}', pvzAddress);
+            
+            // Добавляем текст в зависимости от статуса и подстатуса (для прямого маршрута)
+            if (currentRequestType === 'direct' && currentStatus && currentSubStatus) {
+                if (currentStatus === 'accepted' && letterTemplates.direct.accepted[currentSubStatus]) {
+                    letterContent += letterTemplates.direct.accepted[currentSubStatus]
+                        .replace('{orderNumber}', orderNumber)
+                        .replace('{orderNumberNote}', orderNumberNote);
+                } else if (currentStatus === 'not_accepted' && letterTemplates.direct.not_accepted[currentSubStatus]) {
+                    letterContent += letterTemplates.direct.not_accepted[currentSubStatus]
+                        .replace('{orderNumber}', orderNumber)
+                        .replace('{orderNumberNote}', orderNumberNote);
+                }
+            }
+            
+            // Добавляем подпись
+            letterContent += letterTemplates.footer;
             
             // Отображение предпросмотра
             document.getElementById('letterPreview').textContent = letterContent;
             document.getElementById('letterPreviewContainer').classList.remove('hidden');
+            
+            // Добавляем кнопку копирования
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-button';
+            copyButton.textContent = 'Копировать';
+            copyButton.onclick = copyLetter;
+            document.getElementById('letterPreview').appendChild(copyButton);
             
             // Сохраняем тему письма в атрибуте данных для копирования
             document.getElementById('letterPreview').setAttribute('data-subject', letterSubject);
@@ -252,7 +506,7 @@
         
         // Функция копирования письма
         function copyLetter() {
-            const letterContent = document.getElementById('letterPreview').textContent;
+            const letterContent = document.getElementById('letterPreview').textContent.replace('Копировать', '');
             const letterSubject = document.getElementById('letterPreview').getAttribute('data-subject');
             
             // Формируем полное содержимое для копирования (тема + текст)
@@ -316,6 +570,17 @@
                 to { opacity: 0; transform: translateY(-20px) translateX(-50%); }
             }
         `, styleSheet.cssRules.length);
+        
+        // Функция для загрузки шаблонов писем из файла (заглушка)
+        // В реальном приложении здесь был бы код для загрузки шаблонов из файлов
+        function loadTemplates() {
+            // Пример кода для загрузки шаблонов из файла
+            // fetch('templates/direct_base.txt')
+            //     .then(response => response.text())
+            //     .then(text => {
+            //         letterTemplates.direct.base = text;
+            //     });
+        }
     </script>
 </body>
 </html>
