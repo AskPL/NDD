@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор писем с запросами в ПВЗ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Подключение единого файла стилей -->
+    <link rel="stylesheet" href="ndd-styles.css">
+    <style>
+        /* Дополнительные стили для генератора писем */
+        .letter-preview {
+            background-color: var(--input-bg-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            border-left: 4px solid var(--primary-color);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .copy-button {
+            position: absolute;
+            right: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .preview-container {
+            position: relative;
+            margin-top: 30px;
+        }
+        
+        .letter-type-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 600px) {
+            .letter-type-options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Кнопка назад с абсолютным позиционированием -->
+        <a href="https://askpl.github.io/NDD/" class="back-button" title="Вернуться назад">
+            <span>←</span>
+            <span>Назад</span>
+        </a>
+        
+        <!-- Заголовок центрирован в своем контейнере -->
+        <div class="header-container">
+            <h1><span class="emoji">✉️</span>Генератор писем в ПВЗ</h1>
+        </div>
+        
+        <!-- Форма генерации писем -->
+        <div class="form-group">
+            <label for="pvzAddress">Адрес ПВЗ:</label>
+            <input type="text" id="pvzAddress" placeholder="Введите полный адрес ПВЗ">
+        </div>
+        
+        <div class="form-group">
+            <label for="orderNumber">Номер заказа:</label>
+            <input type="text" id="orderNumber" placeholder="Введите номер заказа (LO- или P0-...)">
+        </div>
+        
+        <!-- Слайдер для типа ПВЗ -->
+        <div class="toggle-switch-container">
+            <label class="toggle-switch-label">Тип ПВЗ:</label>
+            <div class="toggle-switch avito" id="pvzTypeToggle">
+                <div class="toggle-switch-slider"></div>
+                <div class="toggle-option avito">Дропофф</div>
+                <div class="toggle-option c2c">Конечный</div>
+                <!-- Скрытые радиокнопки для совместимости с кодом -->
+                <input type="radio" name="pvzType" value="dropoff" checked style="display: none;" id="dropoffRadio">
+                <input type="radio" name="pvzType" value="final" style="display: none;" id="finalRadio">
+            </div>
+        </div>
+        
+        <!-- Слайдер для маршрута -->
+        <div class="toggle-switch-container">
+            <label class="toggle-switch-label">Тип запроса:</label>
+            <div class="letter-type-options">
+                <button class="tab-button active" data-type="direct" onclick="selectLetterType('direct')">Прямой маршрут</button>
+                <button class="tab-button" data-type="return" onclick="selectLetterType('return')">Возвратный маршрут</button>
+                <button class="tab-button" data-type="video" onclick="selectLetterType('video')">Запрос видео</button>
+            </div>
+        </div>
+        
+        <!-- Кнопка генерации -->
+        <button onclick="generateLetter()">Сгенерировать письмо</button>
+        
+        <!-- Предпросмотр письма -->
+        <div class="preview-container hidden" id="letterPreviewContainer">
+            <h2>Предпросмотр письма</h2>
+            <button class="copy-button" onclick="copyLetter()">Копировать</button>
+            <div id="letterPreview" class="letter-preview"></div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let currentLetterType = 'direct'; // По умолчанию - прямой маршрут
+        
+        // Инициализация при загрузке документа
+        document.addEventListener("DOMContentLoaded", function() {
+            // Инициализация слайдера типа ПВЗ
+            const pvzTypeToggle = document.getElementById('pvzTypeToggle');
+            const dropoffRadio = document.getElementById('dropoffRadio');
+            const finalRadio = document.getElementById('finalRadio');
+            
+            pvzTypeToggle.addEventListener('click', function() {
+                // Переключение класса для анимации слайдера
+                if (this.classList.contains('avito')) {
+                    this.classList.remove('avito');
+                    this.classList.add('c2c');
+                    finalRadio.checked = true;
+                } else {
+                    this.classList.remove('c2c');
+                    this.classList.add('avito');
+                    dropoffRadio.checked = true;
+                }
+                
+                // Эффект пульсации при клике
+                const slider = this.querySelector('.toggle-switch-slider');
+                slider.style.animation = 'none';
+                setTimeout(() => {
+                    slider.style.animation = 'pulse 0.4s ease';
+                }, 10);
+            });
+        });
+        
+        // Функция выбора типа письма
+        function selectLetterType(type) {
+            currentLetterType = type;
+            
+            // Обновляем активную кнопку
+            const typeButtons = document.querySelectorAll('.letter-type-options .tab-button');
+            typeButtons.forEach(button => {
+                button.classList.remove('active');
+                if (button.dataset.type === type) {
+                    button.classList.add('active');
+                    // Анимация для активной кнопки
+                    button.style.animation = 'none';
+                    setTimeout(() => {
+                        button.style.animation = 'fadeIn 0.3s ease';
+                    }, 10);
+                }
+            });
+        }
+        
+        // Функция генерации письма
+        function generateLetter() {
+            const pvzAddress = document.getElementById('pvzAddress').value.trim();
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            const pvzType = document.querySelector('input[name="pvzType"]:checked').value;
+            
+            // Проверка ввода
+            if (!pvzAddress) {
+                showError("Пожалуйста, введите адрес ПВЗ");
+                return;
+            }
+            
+            if (!orderNumber) {
+                showError("Пожалуйста, введите номер заказа");
+                return;
+            }
+            
+            // Проверка формата номера заказа
+            let orderNumberNote = "";
+            if (orderNumber.startsWith('P0')) {
+                orderNumberNote = " (Нет с LO-)";
+            } else if (!orderNumber.startsWith('LO-')) {
+                showError("Номер заказа должен начинаться с LO- или P0-");
+                return;
+            }
+            
+            // Генерация письма в зависимости от типа
+            let letterContent = "";
+            let letterSubject = "";
+            
+            // Общее начало для всех писем
+            letterContent += "Здравствуйте!\n\n";
+            
+            // Формируем письмо в зависимости от типа
+            switch (currentLetterType) {
+                case 'direct':
+                    letterSubject = `Прямой маршрут. Запрос информации ${orderNumber}`;
+                    letterContent += `Пожалуйста, подтвердите получение заказа ${orderNumber}${orderNumberNote} в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
+                    letterContent += "Предоставьте следующую информацию:\n";
+                    letterContent += "1. Дата и примерное время получения заказа\n";
+                    letterContent += "2. Фото бирки заказа\n";
+                    letterContent += "3. Статус заказа на данный момент\n";
+                    letterContent += "4. Если заказ уже выдан, укажите дату выдачи\n\n";
+                    break;
+                    
+                case 'return':
+                    letterSubject = `Возвратный маршрут. Запрос информации ${orderNumber}`;
+                    letterContent += `Пожалуйста, подтвердите получение возвратного заказа ${orderNumber}${orderNumberNote} в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
+                    letterContent += "Предоставьте следующую информацию:\n";
+                    letterContent += "1. Дата и примерное время получения возврата\n";
+                    letterContent += "2. Фото бирки заказа\n";
+                    letterContent += "3. Статус заказа на данный момент\n";
+                    letterContent += "4. Дата планируемой отправки возврата\n\n";
+                    break;
+                    
+                case 'video':
+                    letterSubject = `Запрос видеоматериалов ${orderNumber}`;
+                    letterContent += `Пожалуйста, предоставьте видеоматериалы о заказе ${orderNumber}${orderNumberNote}, полученном в пункт выдачи по адресу: ${pvzAddress}.\n\n`;
+                    letterContent += "Нам необходимы:\n";
+                    letterContent += "1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n";
+                    letterContent += "2. Фото бирки заказа (если доступно)\n";
+                    letterContent += "3. Информация о текущем статусе заказа\n\n";
+                    break;
+            }
+            
+            // Общее завершение для всех писем
+            letterContent += "Согласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае их утери вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\n";
+            letterContent += "Не меняйте, пожалуйста, тему сообщения при отправке ответа.";
+            
+            // Отображение предпросмотра
+            document.getElementById('letterPreview').textContent = letterContent;
+            document.getElementById('letterPreviewContainer').classList.remove('hidden');
+            
+            // Сохраняем тему письма в атрибуте данных для копирования
+            document.getElementById('letterPreview').setAttribute('data-subject', letterSubject);
+            
+            // Прокрутка к предпросмотру
+            document.getElementById('letterPreviewContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Функция копирования письма
+        function copyLetter() {
+            const letterContent = document.getElementById('letterPreview').textContent;
+            const letterSubject = document.getElementById('letterPreview').getAttribute('data-subject');
+            
+            // Формируем полное содержимое для копирования (тема + текст)
+            const fullContent = `Тема: ${letterSubject}\n\n${letterContent}`;
+            
+            // Копируем в буфер обмена
+            navigator.clipboard.writeText(fullContent).then(
+                function() {
+                    // Показываем уведомление об успешном копировании
+                    const copyButton = document.querySelector('.copy-button');
+                    const originalText = copyButton.textContent;
+                    copyButton.textContent = 'Скопировано!';
+                    copyButton.style.backgroundColor = 'var(--success-color)';
+                    
+                    // Возвращаем оригинальный текст через 2 секунды
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                        copyButton.style.backgroundColor = 'var(--primary-color)';
+                    }, 2000);
+                },
+                function() {
+                    // Обработка ошибки
+                    showError("Не удалось скопировать текст. Попробуйте выделить и скопировать вручную.");
+                }
+            );
+        }
+        
+        // Функция показа ошибки
+        function showError(message) {
+            // Создаем модальное окно с ошибкой
+            const errorDiv = document.createElement('div');
+            errorDiv.style.position = 'fixed';
+            errorDiv.style.top = '20px';
+            errorDiv.style.left = '50%';
+            errorDiv.style.transform = 'translateX(-50%)';
+            errorDiv.style.backgroundColor = 'var(--error-color)';
+            errorDiv.style.color = 'white';
+            errorDiv.style.padding = '15px 25px';
+            errorDiv.style.borderRadius = '8px';
+            errorDiv.style.zIndex = '1000';
+            errorDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            errorDiv.style.animation = 'fadeIn 0.3s ease';
+            errorDiv.textContent = message;
+            
+            document.body.appendChild(errorDiv);
+            
+            // Удаляем уведомление через 3 секунды
+            setTimeout(() => {
+                errorDiv.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(errorDiv);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Добавляем анимацию затухания
+        const styleSheet = document.styleSheets[0];
+        styleSheet.insertRule(`
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0) translateX(-50%); }
+                to { opacity: 0; transform: translateY(-20px) translateX(-50%); }
+            }
+        `, styleSheet.cssRules.length);
+    </script>
+</body>
+</html>
