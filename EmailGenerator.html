@@ -16,6 +16,7 @@
             padding: 20px;
             border-radius: 12px;
             margin-top: 20px;
+            margin-bottom: 15px;
             white-space: pre-wrap;
             font-family: 'Montserrat', sans-serif;
             line-height: 1.6;
@@ -29,18 +30,27 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin-left: 15px;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
         }
         
-        .preview-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
+        .copy-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.4);
+        }
+        
+        .copy-button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 8px rgba(255, 152, 0, 0.3);
         }
         
         .copy-button:hover {
@@ -243,9 +253,9 @@
         <div class="preview-container hidden" id="letterPreviewContainer">
             <h2>Предпросмотр письма</h2>
             <div id="letterPreview" class="letter-preview">
-                <button class="copy-button" onclick="copyLetter()">Копировать</button>
                 <!-- Содержимое письма будет добавлено динамически -->
             </div>
+            <button class="copy-button" onclick="copyLetter()">Копировать</button>
         </div>
     </div>
 
@@ -499,12 +509,7 @@
             document.getElementById('letterPreview').textContent = letterContent;
             document.getElementById('letterPreviewContainer').classList.remove('hidden');
             
-            // Добавляем кнопку копирования
-            const copyButton = document.createElement('button');
-            copyButton.className = 'copy-button';
-            copyButton.textContent = 'Копировать';
-            copyButton.onclick = copyLetter;
-            document.getElementById('letterPreview').appendChild(copyButton);
+            // Кнопка копирования теперь в шапке, не нужно добавлять её программно
             
             // Сохраняем тему письма в атрибуте данных для копирования
             document.getElementById('letterPreview').setAttribute('data-subject', letterSubject);
@@ -515,7 +520,7 @@
         
         // Функция копирования письма
         function copyLetter() {
-            const letterContent = document.getElementById('letterPreview').textContent.replace('Копировать', '');
+            const letterContent = document.getElementById('letterPreview').textContent;
             const letterSubject = document.getElementById('letterPreview').getAttribute('data-subject');
             
             // Формируем полное содержимое для копирования (тема + текст)
@@ -526,13 +531,12 @@
                 function() {
                     // Показываем уведомление об успешном копировании
                     const copyButton = document.querySelector('.copy-button');
-                    const originalText = copyButton.textContent;
                     copyButton.textContent = 'Скопировано!';
                     copyButton.style.backgroundColor = 'var(--success-color)';
                     
                     // Возвращаем оригинальный текст через 2 секунды
                     setTimeout(() => {
-                        copyButton.textContent = originalText;
+                        copyButton.textContent = 'Копировать';
                         copyButton.style.backgroundColor = 'var(--primary-color)';
                     }, 2000);
                 },
