@@ -111,7 +111,7 @@
             animation: fadeIn 0.3s ease;
         }
         
-        /* Трехпозиционный слайдер */
+        /* Трехпозиционный слайдер - полностью переработанный */
         .triple-toggle-container {
             position: relative;
             width: 100%;
@@ -128,9 +128,12 @@
             position: relative;
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border-color);
+            overflow: hidden;
+            padding: 3px;
         }
         
         .triple-toggle-option {
+            position: relative;
             flex: 1;
             display: flex;
             align-items: center;
@@ -139,38 +142,23 @@
             z-index: 2;
             font-weight: 600;
             color: var(--text-secondary);
-            transition: all 0.3s ease;
+            transition: color 0.3s ease;
             user-select: none;
-        }
-        
-        .triple-toggle-slider {
-            position: absolute;
-            width: calc(33.33% - 4px);
-            height: calc(100% - 6px);
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             border-radius: 20px;
-            top: 3px;
-            left: 3px;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 1;
         }
         
-        .triple-toggle.position-1 .triple-toggle-slider {
-            left: 3px;
+        .triple-toggle.position-1 .triple-toggle-option:nth-child(1),
+        .triple-toggle.position-2 .triple-toggle-option:nth-child(2),
+        .triple-toggle.position-3 .triple-toggle-option:nth-child(3) {
+            color: white;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         
-        .triple-toggle.position-2 .triple-toggle-slider {
-            left: calc(33.33% + 1px);
-        }
-        
-        .triple-toggle.position-3 .triple-toggle-slider {
-            left: calc(66.66% + 1px);
-        }
-        
-        /* Исправляем активный текст для трёхпозиционного переключателя */
-        .triple-toggle-option {
-            position: relative;
-            z-index: 3;
+        /* Скрываем радиокнопки */
+        .triple-toggle input[type="radio"] {
+            display: none;
         }
         
         .triple-toggle.position-1 .triple-toggle-option:nth-child(1),
@@ -229,7 +217,6 @@
             <label class="toggle-switch-label">Тип запроса:</label>
             <div class="triple-toggle-container">
                 <div class="triple-toggle position-1" id="requestTypeToggle">
-                    <div class="triple-toggle-slider"></div>
                     <div class="triple-toggle-option" data-position="1">Прямой маршрут</div>
                     <div class="triple-toggle-option" data-position="2">Возвратный маршрут</div>
                     <div class="triple-toggle-option" data-position="3">Запрос видео</div>
@@ -344,13 +331,6 @@
                         videoRadio.checked = true;
                         currentRequestType = 'video';
                     }
-                    
-                    // Анимация слайдера
-                    const slider = requestTypeToggle.querySelector('.triple-toggle-slider');
-                    slider.style.animation = 'none';
-                    setTimeout(() => {
-                        slider.style.animation = 'pulse 0.4s ease';
-                    }, 10);
                     
                     // Обновляем дополнительные опции
                     updateAdditionalOptions();
