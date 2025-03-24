@@ -111,54 +111,112 @@
             animation: fadeIn 0.3s ease;
         }
         
-        /* Трехпозиционный слайдер - полностью переработанный */
-        .triple-toggle-container {
-            position: relative;
-            width: 100%;
-            height: 46px;
+        /* Комбинированный слайдер и отдельная кнопка */
+        .request-type-container {
+            display: flex;
+            gap: 15px;
             margin-bottom: 20px;
         }
         
-        .triple-toggle {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            background-color: var(--input-bg-color);
-            border-radius: 23px;
+        .route-toggle-container {
+            flex: 1;
             position: relative;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            padding: 3px;
         }
         
-        .triple-toggle-option {
+        .route-toggle {
             position: relative;
+            width: 100%;
+            height: 46px;
+            background-color: var(--input-bg-color);
+            border-radius: 23px;
+            display: flex;
+            align-items: center;
+            padding: 3px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .route-toggle-slider {
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            width: calc(50% - 4px);
+            height: calc(100% - 6px);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1;
+        }
+        
+        .route-toggle.return .route-toggle-slider {
+            left: calc(50% + 1px);
+        }
+        
+        .route-toggle-option {
             flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-secondary);
+            z-index: 2;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .route-toggle.direct .route-toggle-option.direct,
+        .route-toggle.return .route-toggle-option.return {
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Стиль для кнопки видео */
+        .video-button {
+            width: 150px;
+            height: 46px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 23px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            z-index: 2;
-            font-weight: 600;
             color: var(--text-secondary);
-            transition: color 0.3s ease;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
             user-select: none;
-            border-radius: 20px;
         }
         
-        .triple-toggle.position-1 .triple-toggle-option:nth-child(1),
-        .triple-toggle.position-2 .triple-toggle-option:nth-child(2),
-        .triple-toggle.position-3 .triple-toggle-option:nth-child(3) {
+        .video-button.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+        }
+        
+        .video-button:hover:not(.active) {
+            background-color: rgba(255, 152, 0, 0.1);
         }
         
         /* Скрываем радиокнопки */
-        .triple-toggle input[type="radio"] {
+        .request-type-container input[type="radio"] {
             display: none;
+        }
+        
+        @media (max-width: 500px) {
+            .request-type-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .video-button {
+                width: 100%;
+            }
         }
         
         .triple-toggle.position-1 .triple-toggle-option:nth-child(1),
@@ -212,17 +270,22 @@
             </div>
         </div>
         
-        <!-- Трехпозиционный слайдер для типа запроса -->
+        <!-- Слайдер для маршрута и кнопка запроса видео -->
         <div class="toggle-switch-container">
             <label class="toggle-switch-label">Тип запроса:</label>
-            <div class="triple-toggle-container">
-                <div class="triple-toggle position-1" id="requestTypeToggle">
-                    <div class="triple-toggle-option" data-position="1">Прямой маршрут</div>
-                    <div class="triple-toggle-option" data-position="2">Возвратный маршрут</div>
-                    <div class="triple-toggle-option" data-position="3">Запрос видео</div>
-                    <!-- Скрытые радиокнопки -->
-                    <input type="radio" name="requestType" value="direct" checked id="directRadio">
-                    <input type="radio" name="requestType" value="return" id="returnRadio">
+            <div class="request-type-container">
+                <div class="route-toggle-container">
+                    <div class="route-toggle direct" id="routeToggle">
+                        <div class="route-toggle-slider"></div>
+                        <div class="route-toggle-option direct" data-type="direct">Прямой маршрут</div>
+                        <div class="route-toggle-option return" data-type="return">Возвратный маршрут</div>
+                        <!-- Скрытые радиокнопки -->
+                        <input type="radio" name="requestType" value="direct" checked id="directRadio">
+                        <input type="radio" name="requestType" value="return" id="returnRadio">
+                    </div>
+                </div>
+                <div class="video-button" id="videoButton" data-type="video">
+                    Запрос видео
                     <input type="radio" name="requestType" value="video" id="videoRadio">
                 </div>
             </div>
@@ -307,34 +370,55 @@
                 }, 10);
             });
             
-            // Инициализация трехпозиционного слайдера для типа запроса
-            const requestTypeToggle = document.getElementById('requestTypeToggle');
+            // Инициализация переключателя маршрутов и кнопки видео
+            const routeToggle = document.getElementById('routeToggle');
+            const videoButton = document.getElementById('videoButton');
             const directRadio = document.getElementById('directRadio');
             const returnRadio = document.getElementById('returnRadio');
             const videoRadio = document.getElementById('videoRadio');
             
-            requestTypeToggle.querySelectorAll('.triple-toggle-option').forEach(option => {
+            // Обработчик для переключения типа маршрута
+            routeToggle.querySelectorAll('.route-toggle-option').forEach(option => {
                 option.addEventListener('click', function() {
-                    const position = this.getAttribute('data-position');
+                    const type = this.getAttribute('data-type');
                     
-                    // Устанавливаем позицию слайдера
-                    requestTypeToggle.className = 'triple-toggle position-' + position;
+                    // Снимаем активацию с кнопки видео
+                    videoButton.classList.remove('active');
                     
-                    // Проверяем радиокнопку
-                    if (position === '1') {
+                    // Устанавливаем тип маршрута
+                    if (type === 'direct') {
+                        routeToggle.className = 'route-toggle direct';
                         directRadio.checked = true;
                         currentRequestType = 'direct';
-                    } else if (position === '2') {
+                    } else {
+                        routeToggle.className = 'route-toggle return';
                         returnRadio.checked = true;
                         currentRequestType = 'return';
-                    } else if (position === '3') {
-                        videoRadio.checked = true;
-                        currentRequestType = 'video';
                     }
+                    
+                    // Эффект пульсации при клике
+                    const slider = routeToggle.querySelector('.route-toggle-slider');
+                    slider.style.animation = 'none';
+                    setTimeout(() => {
+                        slider.style.animation = 'pulse 0.4s ease';
+                    }, 10);
                     
                     // Обновляем дополнительные опции
                     updateAdditionalOptions();
                 });
+            });
+            
+            // Обработчик для кнопки запроса видео
+            videoButton.addEventListener('click', function() {
+                // Активируем кнопку видео
+                this.classList.add('active');
+                
+                // Устанавливаем тип запроса
+                videoRadio.checked = true;
+                currentRequestType = 'video';
+                
+                // Обновляем дополнительные опции
+                updateAdditionalOptions();
             });
             
             // Изначально показываем опции для прямого маршрута
