@@ -1,4 +1,99 @@
-<!DOCTYPE html>
+.video-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .date-time-input {
+            margin-left: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 2px solid var(--primary-color);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        input[type="time"] {
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        input[type="time"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+        }            // Инициализация переключателя маршрутов и кнопки видео
+            const routeToggle = document.getElementById('routeToggle');
+            const videoButton = document.getElementById('videoButton');
+            const directRadio = document.getElementById('directRadio');
+            const returnRadio = document.getElementById('returnRadio');
+            const videoRadio = document.getElementById('videoRadio');
+            
+            // Обработчик для переключения типа маршрута
+            routeToggle.querySelectorAll('.route-toggle-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const type = this.getAttribute('data-type');
+                    
+                    // Снимаем активацию с кнопки видео
+                    videoButton.classList.remove('active');
+                    
+                    // Устанавливаем тип маршрута
+                    if (type === 'direct') {
+                        routeToggle.className = 'route-toggle direct';
+                        directRadio.checked = true;
+                        currentRequestType = 'direct';
+                    } else {
+                        routeToggle.className = 'route-toggle return';
+                        returnRadio.checked = true;
+                        currentRequestType = 'return';
+                    }
+                    
+                    // Эффект пульсации при клике
+                    const slider = routeToggle.querySelector('.route-toggle-slider');
+                    slider.style.animation = 'none';
+                    setTimeout(() => {
+                        slider.style.animation = 'pulse 0.4s ease';
+                    }, 10);
+                    
+                    // Обновляем дополнительные опции
+                    updateAdditionalOptions();
+                });
+            });
+            
+            // Обработчик для кнопки запроса видео
+            videoButton.addEventListener('click', function() {
+                // Активируем кнопку видео
+                this.classList.add('active');
+                
+                // Деактивируем оба выбора в слайдере маршрутов
+                routeToggle.className = 'route-toggle';
+                
+                // Устанавливаем тип запроса
+                videoRadio.checked = true;
+                currentRequestType = 'video';
+                
+                // Обновляем дополнительные опции
+                updateAdditionalOptions();
+            });
+            
+            // Обработчик смены типа ПВЗ
+            const pvzTypeToggle = document.getElementById('pvzTypeToggle');
+            pvzTypeToggle.addEventListener('click', function() {
+                if (this.classList.contains('avito')) {
+                    this.classList.remove('avito');
+                    this.classList.add('c2c');
+                    document.getElementById('finalRadio').checked = true;
+                    currentPvzType = 'final';
+                } else {
+                    this.classList.remove<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -318,27 +413,43 @@
         let currentRequestType = 'direct'; // По умолчанию - прямой маршрут
         let currentStatus = null; // Текущий статус (принят/не принят)
         let currentSubStatus = null; // Текущий подстатус из выпадающего списка
+        let currentPvzType = 'dropoff'; // Тип ПВЗ (дропофф по умолчанию)
         
-        // Шаблоны писем - в реальном приложении эти данные можно загружать из файлов
-        const letterTemplates = {
-            direct: {
-                base: "Здравствуйте!\n\nПожалуйста, подтвердите получение заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения заказа\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Если заказ уже выдан, укажите дату выдачи\n\n",
-                accepted: {
-                    "not_accepted_in_system": "Обращаю ваше внимание, что по данным нашей системы заказ {orderNumber}{orderNumberNote} не принят в пункт выдачи.\n\nЕсли заказ фактически получен вами, пожалуйста, примите его системно на вашем терминале или в личном кабинете.\n\n",
-                    "not_accepting": "Мы получили информацию о том, что ваш пункт отказывается принимать заказ {orderNumber}{orderNumberNote}.\n\nПожалуйста, объясните причину отказа и предоставьте фото заказа для подтверждения его состояния.\n\n"
+        // Шаблоны писем - будут загружены из файла
+        let letterTemplates = {
+            greeting: "",
+            footer: "",
+            dropoff: {
+                direct: {
+                    base: "",
+                    accepted: {},
+                    not_accepted: {}
                 },
-                not_accepted: {
-                    "shipping_delay": "Информируем вас о задержке в отгрузке заказа {orderNumber}{orderNumberNote} в ваш пункт выдачи.\n\nПредполагаемая дата доставки: [укажите дату].\n\nПриносим извинения за задержку.\n\n"
+                return: {
+                    base: ""
+                },
+                video: {
+                    base: ""
                 }
             },
-            return: {
-                base: "Здравствуйте!\n\nПожалуйста, подтвердите получение возвратного заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения возврата\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Дата планируемой отправки возврата\n\n"
-            },
-            video: {
-                base: "Здравствуйте!\n\nПожалуйста, предоставьте видеоматериалы о заказе {orderNumber}{orderNumberNote}, полученном в пункт выдачи по адресу: {pvzAddress}.\n\nНам необходимы:\n1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n2. Фото бирки заказа (если доступно)\n3. Информация о текущем статусе заказа\n\n"
-            },
-            footer: "Согласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае их утери вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\nНе меняйте, пожалуйста, тему сообщения при отправке ответа."
+            final: {
+                direct: {
+                    base: ""
+                },
+                return: {
+                    base: ""
+                },
+                video: {
+                    base: ""
+                }
+            }
         };
+        
+        // Темы писем
+        let letterSubjects = {};
+        
+        // Содержимое выпадающих списков
+        let dropdownOptions = {};
         
         // Темы писем
         const letterSubjects = {
@@ -349,6 +460,9 @@
         
         // Инициализация при загрузке документа
         document.addEventListener("DOMContentLoaded", function() {
+            // Загружаем шаблоны при загрузке страницы
+            loadTemplates();
+            
             // Инициализация слайдера типа ПВЗ
             const pvzTypeToggle = document.getElementById('pvzTypeToggle');
             const dropoffRadio = document.getElementById('dropoffRadio');
@@ -441,8 +555,13 @@
             currentStatus = null;
             currentSubStatus = null;
             
+            // Получаем текущий тип ПВЗ
+            const pvzType = document.querySelector('input[name="pvzType"]:checked').value;
+            currentPvzType = pvzType;
+            
             // Показываем опции в зависимости от типа запроса
             if (currentRequestType === 'direct') {
+                // Прямой маршрут - показываем кнопки Принят/Не принят
                 optionsContainer.innerHTML = `
                     <div class="options-title">Статус доставки:</div>
                     <div class="option-buttons">
@@ -452,12 +571,110 @@
                     <div id="subStatusContainer" class="dropdown-container hidden"></div>
                 `;
                 optionsContainer.classList.remove('hidden');
+            } else if (currentRequestType === 'return') {
+                // Возвратный маршрут - показываем кнопки с вариантами статуса
+                optionsContainer.innerHTML = `
+                    <div class="options-title">Статус заказа:</div>
+                    <div class="option-buttons">
+                        <button class="option-button" onclick="selectReturnStatus('not_accepted')">Не принят</button>
+                        <button class="option-button" onclick="selectReturnStatus('cancelled')">Отменен</button>
+                        <button class="option-button" onclick="selectReturnStatus('utilized')">Утилизирован</button>
+                    </div>
+                    <div id="returnDetailContainer" class="dropdown-container hidden"></div>
+                `;
+                optionsContainer.classList.remove('hidden');
+            } else if (currentRequestType === 'video') {
+                // Запрос видео - показываем чекбоксы для типов видео
+                optionsContainer.innerHTML = `
+                    <div class="options-title">Тип запрашиваемого видео:</div>
+                    <div class="video-checkboxes">
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="videoReceiptCheck" onchange="toggleVideoDateInput('receipt')">
+                                <span class="checkmark"></span>
+                            </div>
+                            Видео приема от отправителя
+                        </label>
+                        <div id="videoReceiptDate" class="date-time-input hidden">
+                            <div class="form-group">
+                                <label for="receiptDate">Дата приема:</label>
+                                <div class="date-picker-wrap">
+                                    <input type="date" id="receiptDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="receiptTime">Примерное время:</label>
+                                <input type="time" id="receiptTime">
+                            </div>
+                        </div>
+                        
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="videoShippingCheck" onchange="toggleVideoDateInput('shipping')">
+                                <span class="checkmark"></span>
+                            </div>
+                            Видео отгрузки заказа
+                        </label>
+                        <div id="videoShippingDate" class="date-time-input hidden">
+                            <div class="form-group">
+                                <label for="shippingDate">Дата отгрузки:</label>
+                                <div class="date-picker-wrap">
+                                    <input type="date" id="shippingDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="shippingTime">Примерное время:</label>
+                                <input type="time" id="shippingTime">
+                            </div>
+                        </div>
+                        
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="videoUnloadingCheck" onchange="toggleVideoDateInput('unloading')">
+                                <span class="checkmark"></span>
+                            </div>
+                            Видео разгрузки
+                        </label>
+                        <div id="videoUnloadingDate" class="date-time-input hidden">
+                            <div class="form-group">
+                                <label for="unloadingDate">Дата разгрузки:</label>
+                                <div class="date-picker-wrap">
+                                    <input type="date" id="unloadingDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="unloadingTime">Примерное время:</label>
+                                <input type="time" id="unloadingTime">
+                            </div>
+                        </div>
+                        
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="videoDeliveryCheck" onchange="toggleVideoDateInput('delivery')">
+                                <span class="checkmark"></span>
+                            </div>
+                            Видео выдачи покупателю
+                        </label>
+                        <div id="videoDeliveryDate" class="date-time-input hidden">
+                            <div class="form-group">
+                                <label for="deliveryDate">Дата выдачи:</label>
+                                <div class="date-picker-wrap">
+                                    <input type="date" id="deliveryDate">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="deliveryTime">Примерное время:</label>
+                                <input type="time" id="deliveryTime">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                optionsContainer.classList.remove('hidden');
             } else {
-                // Для других типов запросов пока нет дополнительных опций
                 optionsContainer.classList.add('hidden');
             }
         }
-        
+
         // Функция выбора статуса (принят/не принят)
         function selectStatus(status) {
             currentStatus = status;
@@ -476,6 +693,61 @@
             updateSubStatus();
         }
         
+        // Функция выбора статуса возврата
+        function selectReturnStatus(status) {
+            currentStatus = status;
+            
+            // Подсвечиваем активную кнопку
+            const buttons = document.querySelectorAll('.option-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if ((status === 'not_accepted' && button.textContent === 'Не принят') ||
+                    (status === 'cancelled' && button.textContent === 'Отменен') ||
+                    (status === 'utilized' && button.textContent === 'Утилизирован')) {
+                    button.classList.add('active');
+                }
+            });
+            
+            // При необходимости можно добавить дополнительные поля для каждого статуса
+            const detailContainer = document.getElementById('returnDetailContainer');
+            detailContainer.innerHTML = '';
+            detailContainer.classList.add('hidden');
+            
+            // Пример добавления дополнительных полей для статуса "Утилизирован"
+            if (status === 'utilized') {
+                detailContainer.innerHTML = `
+                    <div class="form-group">
+                        <label for="utilizationDate">Дата утилизации:</label>
+                        <div class="date-picker-wrap">
+                            <input type="date" id="utilizationDate">
+                        </div>
+                    </div>
+                `;
+                detailContainer.classList.remove('hidden');
+                
+                // Устанавливаем сегодняшнюю дату
+                document.getElementById('utilizationDate').valueAsDate = new Date();
+            }
+        }
+        
+        // Функция для переключения полей ввода даты и времени для видео
+        function toggleVideoDateInput(videoType) {
+            const checkbox = document.getElementById(`video${videoType.charAt(0).toUpperCase() + videoType.slice(1)}Check`);
+            const dateContainer = document.getElementById(`video${videoType}Date`);
+            
+            if (checkbox.checked) {
+                dateContainer.classList.remove('hidden');
+                
+                // Устанавливаем сегодняшнюю дату по умолчанию
+                const dateInput = dateContainer.querySelector('input[type="date"]');
+                if (dateInput) {
+                    dateInput.valueAsDate = new Date();
+                }
+            } else {
+                dateContainer.classList.add('hidden');
+            }
+        }
+        
         // Функция обновления подстатусов
         function updateSubStatus() {
             const subStatusContainer = document.getElementById('subStatusContainer');
@@ -487,33 +759,49 @@
             
             subStatusContainer.classList.remove('hidden');
             
-            if (currentStatus === 'accepted') {
+            // Формируем ключ для получения опций выпадающего списка
+            const pvzCode = currentPvzType === 'dropoff' ? '1' : '2';
+            const requestCode = getRequestTypeCode(currentRequestType);
+            const statusCode = currentStatus === 'accepted' ? '1' : '2';
+            const dropdownKey = `${pvzCode}-${requestCode}-${statusCode}`;
+            
+            // Получаем опции из загруженных данных
+            const options = dropdownOptions[dropdownKey] || {};
+            
+            if (Object.keys(options).length > 0) {
+                // Формируем HTML для выпадающего списка
+                let optionsHtml = '<option value="">-- Выберите --</option>';
+                for (const [key, value] of Object.entries(options)) {
+                    optionsHtml += `<option value="${key}">${value}</option>`;
+                }
+                
                 subStatusContainer.innerHTML = `
                     <div class="form-group">
                         <label for="subStatus">Выберите причину:</label>
                         <select id="subStatus" onchange="setSubStatus(this.value)">
-                            <option value="">-- Выберите --</option>
-                            <option value="not_accepted_in_system">Не принят системно</option>
-                            <option value="not_accepting">Не принимают</option>
+                            ${optionsHtml}
                         </select>
                     </div>
                 `;
-            } else if (currentStatus === 'not_accepted') {
-                subStatusContainer.innerHTML = `
-                    <div class="form-group">
-                        <label for="subStatus">Выберите причину:</label>
-                        <select id="subStatus" onchange="setSubStatus(this.value)">
-                            <option value="">-- Выберите --</option>
-                            <option value="shipping_delay">Задержка отгрузки</option>
-                        </select>
-                    </div>
-                `;
+            } else {
+                // Если нет опций, скрываем контейнер
+                subStatusContainer.classList.add('hidden');
             }
         }
         
         // Функция установки подстатуса
         function setSubStatus(subStatus) {
             currentSubStatus = subStatus;
+        }
+        
+        // Вспомогательная функция для получения кода типа запроса
+        function getRequestTypeCode(type) {
+            switch (type) {
+                case 'direct': return '1';
+                case 'return': return '2';
+                case 'video': return '3';
+                default: return '1';
+            }
         }
         
         // Функция генерации письма
@@ -552,29 +840,96 @@
             
             // Формируем контент и тему письма
             let letterContent = "";
-            let letterSubject = letterSubjects[currentRequestType].replace('{orderNumber}', orderNumber);
+            let letterSubject = letterSubjects[currentRequestType]?.replace('{orderNumber}', orderNumber) || 
+                                `Запрос информации по заказу ${orderNumber}`;
+            
+            // Начинаем с приветствия
+            letterContent += letterTemplates.greeting + "\n\n";
+            
+            // Получаем форматированный тип ПВЗ
+            const pvzTypeFormatted = getPvzTypeFormatted();
             
             // Базовый контент в зависимости от типа запроса
-            letterContent += letterTemplates[currentRequestType].base
-                .replace('{orderNumber}', orderNumber)
-                .replace('{orderNumberNote}', orderNumberNote)
-                .replace('{pvzAddress}', pvzAddress);
+            if (letterTemplates[pvzTypeFormatted]?.[currentRequestType]?.base) {
+                letterContent += letterTemplates[pvzTypeFormatted][currentRequestType].base
+                    .replace('{orderNumber}', orderNumber)
+                    .replace('{orderNumberNote}', orderNumberNote)
+                    .replace('{pvzAddress}', pvzAddress);
+            }
             
-            // Добавляем текст в зависимости от статуса и подстатуса (для прямого маршрута)
-            if (currentRequestType === 'direct' && currentStatus && currentSubStatus) {
-                if (currentStatus === 'accepted' && letterTemplates.direct.accepted[currentSubStatus]) {
-                    letterContent += letterTemplates.direct.accepted[currentSubStatus]
+            // Добавляем текст в зависимости от статуса и подстатуса
+            if (currentStatus && currentSubStatus && 
+                letterTemplates[pvzTypeFormatted]?.[currentRequestType]?.[currentStatus]?.[currentSubStatus]) {
+                let statusTemplate = letterTemplates[pvzTypeFormatted][currentRequestType][currentStatus][currentSubStatus];
+                if (statusTemplate.content) {
+                    letterContent += "\n\n" + statusTemplate.content
                         .replace('{orderNumber}', orderNumber)
-                        .replace('{orderNumberNote}', orderNumberNote);
-                } else if (currentStatus === 'not_accepted' && letterTemplates.direct.not_accepted[currentSubStatus]) {
-                    letterContent += letterTemplates.direct.not_accepted[currentSubStatus]
-                        .replace('{orderNumber}', orderNumber)
-                        .replace('{orderNumberNote}', orderNumberNote);
+                        .replace('{orderNumberNote}', orderNumberNote)
+                        .replace('{pvzAddress}', pvzAddress);
+                }
+            }
+            
+            // Для запроса видео добавляем информацию о запрашиваемых видео и датах
+            if (currentRequestType === 'video') {
+                const videoTypes = [
+                    { id: 'receipt', name: 'приема от отправителя' },
+                    { id: 'shipping', name: 'отгрузки заказа' },
+                    { id: 'unloading', name: 'разгрузки' },
+                    { id: 'delivery', name: 'выдачи покупателю' }
+                ];
+                
+                let videoDetails = '';
+                let hasVideoSelected = false;
+                
+                videoTypes.forEach(type => {
+                    const checkbox = document.getElementById(`video${type.id.charAt(0).toUpperCase() + type.id.slice(1)}Check`);
+                    if (checkbox && checkbox.checked) {
+                        hasVideoSelected = true;
+                        
+                        const dateInput = document.getElementById(`${type.id}Date`);
+                        const timeInput = document.getElementById(`${type.id}Time`);
+                        
+                        let dateText = '';
+                        if (dateInput && dateInput.value) {
+                            const date = new Date(dateInput.value);
+                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                            dateText = date.toLocaleDateString('ru-RU', options);
+                            
+                            if (timeInput && timeInput.value) {
+                                dateText += ` около ${timeInput.value}`;
+                            }
+                        }
+                        
+                        videoDetails += `- Видео ${type.name}`;
+                        if (dateText) {
+                            videoDetails += ` (${dateText})`;
+                        }
+                        videoDetails += "\n";
+                    }
+                });
+                
+                if (hasVideoSelected) {
+                    letterContent += "\n\nВ частности, нам требуются следующие видеоматериалы:\n" + videoDetails;
+                }
+            }
+            
+            // Добавляем дополнительную информацию для возвратного маршрута
+            if (currentRequestType === 'return' && currentStatus) {
+                // Если статус "Утилизирован", добавляем дату
+                if (currentStatus === 'utilized') {
+                    const utilizationDate = document.getElementById('utilizationDate');
+                    if (utilizationDate && utilizationDate.value) {
+                        const date = new Date(utilizationDate.value);
+                        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                        const dateText = date.toLocaleDateString('ru-RU', options);
+                        
+                        letterContent += `\n\nУкажите, пожалуйста, на каком основании заказ был утилизирован ${dateText}.\n`;
+                    }
                 }
             }
             
             // Добавляем подпись
-            letterContent += letterTemplates.footer;
+            letterContent += "\n\n" + letterTemplates.footer;
             
             // Отображение предпросмотра
             document.getElementById('letterPreview').textContent = letterContent;
@@ -655,15 +1010,188 @@
             }
         `, styleSheet.cssRules.length);
         
-        // Функция для загрузки шаблонов писем из файла (заглушка)
-        // В реальном приложении здесь был бы код для загрузки шаблонов из файлов
-        function loadTemplates() {
-            // Пример кода для загрузки шаблонов из файла
-            // fetch('templates/direct_base.txt')
-            //     .then(response => response.text())
-            //     .then(text => {
-            //         letterTemplates.direct.base = text;
-            //     });
+        // Добавляем функцию загрузки шаблонов
+        async function loadTemplates() {
+            try {
+                // Загружаем файл шаблонов
+                const response = await fetch('templates.txt');
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить шаблоны писем.');
+                }
+                
+                const templateText = await response.text();
+                
+                // Парсим шаблоны по разделителям
+                const templateSections = templateText.split(/======\s*([^=\n]+)\s*======/).filter(Boolean);
+                
+                // Обрабатываем каждую секцию
+                for (let i = 0; i < templateSections.length; i += 2) {
+                    if (i + 1 < templateSections.length) {
+                        const path = templateSections[i].trim();
+                        let content = templateSections[i + 1].trim();
+                        
+                        // Удаляем внутренние комментарии
+                        content = content.replace(/\|.*$/gm, '').trim();
+                        
+                        // Обрабатываем специальные секции
+                        if (path === 'templ-subjects') {
+                            parseSubjects(content);
+                        } else if (path.startsWith('dropdown-')) {
+                            parseDropdown(path.substring(9), content);
+                        } else {
+                            // Проверяем, содержит ли путь название шаблона
+                            let title = null;
+                            const contentLines = content.split('\n');
+                            if (contentLines.length > 0 && contentLines[0].startsWith('======')) {
+                                title = contentLines[0].replace(/======\s*|\s*======/g, '').trim();
+                                content = contentLines.slice(1).join('\n').trim();
+                            }
+                            
+                            // Заполняем соответствующую секцию шаблонов
+                            assignTemplateByPath(path, content, title);
+                        }
+                    }
+                }
+                
+                console.log('Шаблоны успешно загружены');
+            } catch (error) {
+                console.error('Ошибка загрузки шаблонов:', error);
+                showError('Ошибка загрузки шаблонов писем. Используются стандартные шаблоны.');
+                useDefaultTemplates();
+            }
+        }
+        
+        // Функция для парсинга тем писем
+        function parseSubjects(content) {
+            content.split('\n').forEach(line => {
+                if (line.includes('=')) {
+                    const [key, value] = line.split('=', 2);
+                    letterSubjects[key.trim()] = value.trim();
+                }
+            });
+        }
+        
+        // Функция для парсинга выпадающих списков
+        function parseDropdown(path, content) {
+            const options = {};
+            content.split('\n').forEach(line => {
+                if (line.includes('=')) {
+                    const [key, value] = line.split('=', 2);
+                    options[key.trim()] = value.trim();
+                }
+            });
+            dropdownOptions[path] = options;
+        }
+        
+        // Функция для назначения шаблона по пути
+        function assignTemplateByPath(path, content, title = null) {
+            const parts = path.split('-').map(part => parseInt(part) || part);
+            
+            // Обрабатываем на основе пути
+            if (path === '0-0') {
+                letterTemplates.greeting = content;
+            } else if (path === '0-1') {
+                letterTemplates.footer = content;
+            } else if (parts.length >= 3) {
+                const pvzType = parts[0] === 1 ? 'dropoff' : 'final';
+                const requestType = getRequestTypeByCode(parts[1]);
+                
+                if (parts.length === 3 && parts[2] === 0) {
+                    // Базовый шаблон для типа запроса
+                    letterTemplates[pvzType][requestType].base = content;
+                } else if (parts.length === 4) {
+                    // Детализированный шаблон
+                    const statusType = parts[2] === 1 ? 'accepted' : 'not_accepted';
+                    const subStatusKey = title ? title.toLowerCase().replace(/\s+/g, '_') : `option_${parts[3]}`;
+                    
+                    // Убедимся, что объект существует
+                    if (!letterTemplates[pvzType][requestType][statusType]) {
+                        letterTemplates[pvzType][requestType][statusType] = {};
+                    }
+                    
+                    letterTemplates[pvzType][requestType][statusType][subStatusKey] = {
+                        title: title || `Опция ${parts[3]}`,
+                        content: content
+                    };
+                }
+            }
+        }
+        
+        // Вспомогательная функция для получения типа запроса по коду
+        function getRequestTypeByCode(code) {
+            switch (code) {
+                case 1: return 'direct';
+                case 2: return 'return';
+                case 3: return 'video';
+                default: return 'direct';
+            }
+        }
+        
+        // Возвращает тип ПВЗ с нужным форматом
+        function getPvzTypeFormatted() {
+            return currentPvzType === 'dropoff' ? 'dropoff' : 'final';
+        }
+        
+        // Функция для использования стандартных шаблонов в случае ошибки
+        function useDefaultTemplates() {
+            letterTemplates = {
+                greeting: "Здравствуйте!",
+                footer: "Согласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае их утери вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\nНе меняйте, пожалуйста, тему сообщения при отправке ответа.",
+                dropoff: {
+                    direct: {
+                        base: "Пожалуйста, подтвердите получение заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения заказа\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Если заказ уже выдан, укажите дату выдачи",
+                        accepted: {
+                            "not_accepted_in_system": {
+                                title: "Не принят системно",
+                                content: "Обращаю ваше внимание, что по данным нашей системы заказ {orderNumber}{orderNumberNote} не принят в пункт выдачи.\n\nЕсли заказ фактически получен вами, пожалуйста, примите его системно на вашем терминале или в личном кабинете."
+                            },
+                            "not_accepting": {
+                                title: "Не принимают", 
+                                content: "Мы получили информацию о том, что ваш пункт отказывается принимать заказ {orderNumber}{orderNumberNote}.\n\nПожалуйста, объясните причину отказа и предоставьте фото заказа для подтверждения его состояния."
+                            }
+                        },
+                        not_accepted: {
+                            "shipping_delay": {
+                                title: "Задержка отгрузки",
+                                content: "Информируем вас о задержке в отгрузке заказа {orderNumber}{orderNumberNote} в ваш пункт выдачи.\n\nПредполагаемая дата доставки: [укажите дату].\n\nПриносим извинения за задержку."
+                            }
+                        }
+                    },
+                    return: {
+                        base: "Пожалуйста, подтвердите получение возвратного заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения возврата\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Дата планируемой отправки возврата"
+                    },
+                    video: {
+                        base: "Пожалуйста, предоставьте видеоматериалы о заказе {orderNumber}{orderNumberNote}, полученном в пункт выдачи по адресу: {pvzAddress}.\n\nНам необходимы:\n1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n2. Фото бирки заказа (если доступно)\n3. Информация о текущем статусе заказа"
+                    }
+                },
+                final: {
+                    direct: {
+                        base: "Пожалуйста, подтвердите получение заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения заказа\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Если заказ уже выдан, укажите дату выдачи"
+                    },
+                    return: {
+                        base: "Пожалуйста, подтвердите получение возвратного заказа {orderNumber}{orderNumberNote} в пункт выдачи по адресу: {pvzAddress}.\n\nПредоставьте следующую информацию:\n1. Дата и примерное время получения возврата\n2. Фото бирки заказа\n3. Статус заказа на данный момент\n4. Дата планируемой отправки возврата"
+                    },
+                    video: {
+                        base: "Пожалуйста, предоставьте видеоматериалы о заказе {orderNumber}{orderNumberNote}, полученном в пункт выдачи по адресу: {pvzAddress}.\n\nНам необходимы:\n1. Видеозаписи с камер наблюдения за период пребывания заказа в ПВЗ\n2. Фото бирки заказа (если доступно)\n3. Информация о текущем статусе заказа"
+                    }
+                }
+            };
+            
+            letterSubjects = {
+                direct: "Прямой маршрут. Запрос информации {orderNumber}",
+                return: "Возвратный маршрут. Запрос информации {orderNumber}",
+                video: "Запрос видеоматериалов {orderNumber}"
+            };
+            
+            dropdownOptions = {
+                "1-1-1": {
+                    "not_accepted_in_system": "Не принят системно",
+                    "not_accepting": "Не принимают"
+                },
+                "1-1-2": {
+                    "shipping_delay": "Задержка отгрузки"
+                }
+            };
         }
     </script>
 </body>
