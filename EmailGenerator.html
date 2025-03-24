@@ -141,7 +141,7 @@
         
         .route-toggle-slider {
             position: absolute;
-            left: 3px;
+            left: -100%; /* Скрыто по умолчанию */
             top: 3px;
             width: calc(50% - 4px);
             height: calc(100% - 6px);
@@ -149,6 +149,10 @@
             border-radius: 20px;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             z-index: 1;
+        }
+        
+        .route-toggle.direct .route-toggle-slider {
+            left: 3px;
         }
         
         .route-toggle.return .route-toggle-slider {
@@ -412,6 +416,9 @@
             videoButton.addEventListener('click', function() {
                 // Активируем кнопку видео
                 this.classList.add('active');
+                
+                // Деактивируем оба выбора в слайдере маршрутов
+                routeToggle.className = 'route-toggle';
                 
                 // Устанавливаем тип запроса
                 videoRadio.checked = true;
