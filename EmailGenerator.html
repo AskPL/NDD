@@ -171,6 +171,38 @@
             line-height: 1.5;
         }
         
+        /* Стили для основных кнопок и вкладок */
+        .tab-buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            flex: 1;
+            background-color: var(--primary-color);
+            color: black;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .tab-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .tab-button.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
         /* Модальное окно */
         .modal {
             display: none;
@@ -218,34 +250,9 @@
             color: var(--primary-color);
         }
         
-        .tab-buttons-container {
-            display: flex;
-            gap: 10px;
+        /* Стилизация кнопок в модальном окне */
+        .modal .tab-buttons-container {
             margin-bottom: 20px;
-        }
-        
-        .tab-button {
-            flex: 1;
-            text-align: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: black;
-            border: none;
-            border-radius: 8px;
-            padding: 14px 20px;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .tab-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
-        }
-        
-        .tab-button.active {
-            background: linear-gradient(135deg, var(--accent-color), var(--primary-dark));
-            color: white;
         }
         
         .template-category {
@@ -929,7 +936,7 @@
             // Обновляем активную кнопку
             document.querySelectorAll(".tab-button").forEach(tab => {
                 tab.classList.remove("active");
-                if (tab.dataset.tab === tabId || tab.innerText.toLowerCase().includes(tabId)) {
+                if (tab.innerText.toLowerCase().includes(tabId)) {
                     tab.classList.add("active");
                 }
             });
@@ -957,11 +964,10 @@
             document.getElementById(tabId + "Tab").style.display = "block";
             
             // Обновляем активную кнопку
-            document.querySelectorAll(".modal-tab, .tab-button").forEach(tab => {
+            document.querySelectorAll(".tab-button").forEach(tab => {
+                tab.classList.remove("active");
                 if (tab.id === tabId + "TabBtn") {
                     tab.classList.add("active");
-                } else {
-                    tab.classList.remove("active");
                 }
             });
             
@@ -1534,16 +1540,7 @@
         }
         
         // Инициализация при загрузке страницы
-        document.addEventListener("DOMContentLoaded", function() {
-            // Установка обработчиков для модальных вкладок
-            document.getElementById("userTemplatesTabBtn").addEventListener("click", function() {
-                switchModalTab("userTemplates");
-            });
-            
-            document.getElementById("importTabBtn").addEventListener("click", function() {
-                switchModalTab("import");
-            });
-            
+        document.addEventListener("DOMContentLoaded", function() {            
             // Обработчик для новой категории
             document.getElementById("newTemplateCategory").addEventListener("change", function() {
                 if (this.value === "new-category") {
