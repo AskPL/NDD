@@ -9,10 +9,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="ndd-styles.css">
     <style>
+        :root {
+            --primary-color: #FF9800;
+            --primary-dark: #F57C00;
+            --primary-light: #FFE0B2;
+            --accent-color: #FF5722;
+            --error-color: #F44336;
+            --success-color: #4CAF50;
+            --warning-color: #FFC107;
+            
+            --bg-color: #121212;
+            --card-bg-color: #1E1E1E;
+            --input-bg-color: #2C2C2C;
+            --border-color: #424242;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --text-accent: #90CAF9;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            padding: 25px;
+        }
+        
         .email-generator {
             display: flex;
             gap: 25px;
-            margin-top: 25px;
+            margin-top: 20px;
         }
         
         .form-panel, .preview-panel {
@@ -23,11 +49,11 @@
         }
         
         .form-panel {
-            flex: 5;
+            flex: 1;
         }
         
         .preview-panel {
-            flex: 6;
+            flex: 1;
             display: flex;
             flex-direction: column;
         }
@@ -39,7 +65,46 @@
             color: var(--primary-color);
             display: flex;
             align-items: center;
+            justify-content: space-between;
+        }
+        
+        .panel-title {
+            display: flex;
+            align-items: center;
             gap: 10px;
+        }
+        
+        .panel-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .tab-controls {
+            display: flex;
+            gap: 5px;
+            background: var(--input-bg-color);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            background: var(--primary-color);
+            color: #000;
+            font-weight: 600;
         }
         
         #emailPreview {
@@ -48,32 +113,47 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
-            min-height: 350px;
-            max-height: 600px;
+            height: 350px;
             overflow-y: auto;
             margin-bottom: 15px;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
             line-height: 1.6;
             white-space: pre-wrap;
+            flex-grow: 1;
         }
         
-        .dynamic-fields {
-            margin-top: 20px;
+        .form-group {
+            margin-bottom: 20px;
         }
         
-        .success-message {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--success-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
-            opacity: 0;
-            z-index: 100;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
         
         .field-hint {
@@ -83,118 +163,12 @@
             line-height: 1.4;
         }
         
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-        
-        .tab {
-            padding: 10px 15px;
-            border-radius: 8px;
-            background: var(--input-bg-color);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }
-        
-        .tab.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .panel-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-        }
-        
-        .copy-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .copy-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
-        }
-        
-        .new-template-button {
-            background: linear-gradient(135deg, var(--accent-color), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-        
-        .new-template-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.3);
-        }
-        
-        .template-editor {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 152, 0, 0.05);
-            border-radius: 8px;
-            border: 1px dashed var(--primary-color);
-        }
-        
-        .template-editor.active {
-            display: block;
-        }
-        
-        .template-editor textarea {
-            min-height: 150px;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .template-category {
-            margin-bottom: 15px;
-        }
-        
-        .template-category .category-name {
-            font-weight: 600;
-            color: var(--primary-color);
-            padding: 8px 0;
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        optgroup {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
         .tooltip {
             position: relative;
             display: inline-block;
-            margin-left: 8px;
+            margin-left: 5px;
             font-size: 14px;
-            color: var(--primary-color);
+            color: var(--text-secondary);
             cursor: help;
         }
         
@@ -208,9 +182,8 @@
             padding: 10px;
             position: absolute;
             z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 100%;
+            right: 0;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.3s;
@@ -225,31 +198,196 @@
             opacity: 1;
         }
         
-        .template-action-buttons {
+        .panel-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .copy-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: black;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .copy-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .subject-line {
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
+            opacity: 0;
+            z-index: 100;
+            font-size: 14px;
+        }
+        
+        /* Иконка шестеренки */
+        .settings-icon {
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-icon:hover {
+            color: var(--primary-color);
+            transform: rotate(45deg);
+        }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg-color);
+            margin: 5% auto;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 70%;
+            max-width: 800px;
+            position: relative;
+        }
+        
+        .close-modal {
+            color: var(--text-secondary);
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color);
+        }
+        
+        .modal-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .modal-tabs {
             display: flex;
             gap: 10px;
-            margin-top: 15px;
+            margin-bottom: 20px;
         }
         
-        .action-button {
-            background-color: var(--input-bg-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
+        .modal-tab {
             padding: 8px 15px;
-            border-radius: 6px;
+            border-radius: 5px;
+            background: var(--input-bg-color);
+            border: none;
             cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s;
+            font-size: 14px;
+            color: var(--text-secondary);
         }
         
-        .action-button.save {
-            background-color: var(--success-color);
-            color: white;
-            border-color: var(--success-color);
+        .modal-tab.active {
+            background: var(--primary-color);
+            color: black;
+            font-weight: 500;
         }
         
-        .action-button.cancel {
-            background-color: var(--border-color);
+        .template-category {
+            margin-bottom: 20px;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            padding: 8px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        .template-item {
+            padding: 12px;
+            background: var(--input-bg-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .template-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .template-subject {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .template-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .template-action {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        .template-action:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .template-action.edit {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .template-action.delete {
+            border-color: var(--error-color);
+            color: var(--error-color);
         }
         
         /* Адаптивный дизайн */
@@ -262,8 +400,8 @@
                 width: 100%;
             }
             
-            .tabs {
-                flex-wrap: wrap;
+            .modal-content {
+                width: 90%;
             }
         }
         
@@ -296,18 +434,22 @@
             <!-- Панель формы -->
             <div class="form-panel">
                 <div class="panel-header">
-                    <span class="emoji">📝</span>Параметры письма
+                    <div class="panel-title">
+                        <span class="emoji">📝</span>Параметры письма
+                    </div>
+                    <div class="panel-controls">
+                        <div class="settings-icon" onclick="openSettingsModal()">⚙️</div>
+                    </div>
                 </div>
                 
-                <!-- Вкладки категорий -->
-                <div class="tabs">
-                    <div class="tab active" data-tab="templates">Выбрать шаблон</div>
-                    <div class="tab" data-tab="create">Создать новый</div>
-                    <div class="tab" data-tab="manage">Управление шаблонами</div>
+                <!-- Табы для выбора шаблона/создания нового -->
+                <div class="tab-controls">
+                    <button class="tab active" data-tab="select">Выбрать шаблон</button>
+                    <button class="tab" data-tab="create">Создать новый</button>
                 </div>
                 
-                <!-- Секция выбора шаблона -->
-                <div class="tab-content" id="templatesTab">
+                <!-- Содержимое вкладки выбора шаблона -->
+                <div class="tab-content" id="selectTab">
                     <!-- Выбор шаблона -->
                     <div class="form-group">
                         <label for="templateSelect">Выберите шаблон:</label>
@@ -359,32 +501,45 @@
                     <!-- Базовые поля, которые нужны почти во всех шаблонах -->
                     <div class="form-group">
                         <label for="orderNumber">Номер заказа:</label>
-                        <span class="tooltip">ℹ️
-                            <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
-                        </span>
                         <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
+                        <div class="tooltip">ℹ️
+                            <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
+                        </div>
                         <div class="field-hint">Укажите полный номер заказа, включая префикс LO при необходимости</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="pvzAddress">Адрес ПВЗ:</label>
-                        <span class="tooltip">ℹ️
-                            <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
-                        </span>
                         <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
+                        <div class="tooltip">ℹ️
+                            <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
+                        </div>
                         <div class="field-hint">Введите полный адрес включая город, улицу, дом и другие важные детали</div>
                     </div>
                     
                     <!-- Динамические поля, которые будут меняться в зависимости от выбранного шаблона -->
-                    <div id="dynamicFields" class="dynamic-fields"></div>
+                    <div id="dynamicFields"></div>
+                    
+                    <!-- Чекбокс для включения стандартной подписи -->
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="includeFooterCheck" checked onchange="generateEmail()">
+                                <span class="checkmark"></span>
+                            </div>
+                            Включить стандартную подпись
+                        </label>
+                    </div>
                 </div>
                 
-                <!-- Секция создания нового шаблона -->
+                <!-- Содержимое вкладки создания нового шаблона -->
                 <div class="tab-content" id="createTab" style="display:none;">
                     <div class="form-group">
                         <label for="newTemplateName">Название шаблона:</label>
                         <input type="text" id="newTemplateName" placeholder="Например: Запрос видео при краже">
-                        <div class="field-hint">Укажите краткое, но информативное название для быстрого поиска</div>
+                        <div class="tooltip">ℹ️
+                            <span class="tooltip-text">Укажите краткое, но информативное название для быстрого поиска</span>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -407,10 +562,10 @@
                     
                     <div class="form-group">
                         <label for="newTemplateText">Текст шаблона:</label>
-                        <span class="tooltip">ℹ️
+                        <textarea id="newTemplateText" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
+                        <div class="tooltip">ℹ️
                             <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
-                        </span>
-                        <textarea id="newTemplateText" class="input" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
+                        </div>
                         <div class="field-hint">Доступные переменные: {{orderNumber}}, {{pvzAddress}}, а также любые собственные в формате {{переменная}}</div>
                     </div>
                     
@@ -422,43 +577,77 @@
                     <div class="form-group">
                         <label class="checkbox-container">
                             <div class="custom-checkbox">
-                                <input type="checkbox" id="includeFooterCheck" checked>
+                                <input type="checkbox" id="newTemplateFooterCheck" checked>
                                 <span class="checkmark"></span>
                             </div>
                             Включить стандартную подпись
                         </label>
-                        <div class="field-hint">Стандартная подпись содержит текст про обязательство отвечать в течение суток</div>
                     </div>
                     
-                    <button class="new-template-button" onclick="saveNewTemplate()">
+                    <button class="copy-button" onclick="saveNewTemplate()">
                         <span class="emoji">💾</span>
                         <span>Сохранить шаблон</span>
                     </button>
-                </div>
-                
-                <!-- Секция управления шаблонами -->
-                <div class="tab-content" id="manageTab" style="display:none;">
-                    <div id="userTemplatesList">
-                        <!-- Список пользовательских шаблонов будет загружен сюда -->
-                    </div>
                 </div>
             </div>
             
             <!-- Панель предпросмотра -->
             <div class="preview-panel">
                 <div class="panel-header">
-                    <span class="emoji">📧</span>Готовое письмо
+                    <div class="panel-title">
+                        <span class="emoji">📧</span>Готовое письмо
+                    </div>
                 </div>
                 
                 <div id="emailPreview">Выберите шаблон письма и заполните необходимые поля слева, чтобы увидеть результат.</div>
                 
                 <div class="panel-actions">
-                    <div id="emailSubject" style="color: var(--text-secondary); font-style: italic;"></div>
+                    <div id="emailSubject" class="subject-line"></div>
                     
                     <button class="copy-button" onclick="copyEmail()">
                         <span class="emoji">📋</span>
                         <span>Скопировать</span>
                     </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Модальное окно настроек -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
+                <div class="modal-header">Управление шаблонами</div>
+                
+                <div class="modal-tabs">
+                    <button class="modal-tab active" data-tab="userTemplates">Мои шаблоны</button>
+                    <button class="modal-tab" data-tab="import">Импорт/Экспорт</button>
+                </div>
+                
+                <div class="modal-tab-content" id="userTemplatesTab">
+                    <!-- Список пользовательских шаблонов будет загружен сюда -->
+                    <div id="userTemplatesList">
+                        <p style="text-align: center; color: var(--text-secondary);">У вас пока нет сохраненных шаблонов.</p>
+                    </div>
+                </div>
+                
+                <div class="modal-tab-content" id="importTab" style="display:none;">
+                    <div class="form-group">
+                        <label for="exportData">Экспорт шаблонов:</label>
+                        <textarea id="exportData" readonly onclick="this.select()"></textarea>
+                        <button class="copy-button" style="margin-top: 10px;" onclick="copyExportData()">
+                            <span class="emoji">📋</span>
+                            <span>Скопировать код</span>
+                        </button>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="importData">Импорт шаблонов:</label>
+                        <textarea id="importData" placeholder="Вставьте сюда код экспорта шаблонов"></textarea>
+                        <button class="copy-button" style="margin-top: 10px;" onclick="importTemplates()">
+                            <span class="emoji">📥</span>
+                            <span>Импортировать</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -488,7 +677,7 @@
                         id: "dateTime", 
                         label: "Дата и время передачи:", 
                         placeholder: "Например: 25.03.2025 в 15:30",
-                        hint: "Укажите дату и время в любом формате - система автоматически распознает и преобразует его в нужный формат"
+                        hint: "Укажите дату и время в любом формате - система автоматически распознает и преобразует его"
                     }
                 ]
             },
@@ -803,6 +992,60 @@
         
         // === Основные функции для работы генератора ===
         
+        // Переключение между вкладками
+        function switchTab(tabId) {
+            // Скрываем все вкладки
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.style.display = "none";
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabId + "Tab").style.display = "block";
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.classList.remove("active");
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add("active");
+                }
+            });
+        }
+        
+        // Функция для модальных окон
+        function openSettingsModal() {
+            document.getElementById("settingsModal").style.display = "block";
+            updateUserTemplatesList();
+            updateExportData();
+        }
+        
+        function closeSettingsModal() {
+            document.getElementById("settingsModal").style.display = "none";
+        }
+        
+        // Переключение между вкладками модального окна
+        function switchModalTab(tabId) {
+            // Скрываем все вкладки
+            document.querySelectorAll(".modal-tab-content").forEach(tab => {
+                tab.style.display = "none";
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabId + "Tab").style.display = "block";
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll(".modal-tab").forEach(tab => {
+                tab.classList.remove("active");
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add("active");
+                }
+            });
+            
+            // Если выбрана вкладка импорта, обновляем данные для экспорта
+            if (tabId === "import") {
+                updateExportData();
+            }
+        }
+        
         // Функция для обновления динамических полей в зависимости от выбранного шаблона
         function updateDynamicFields() {
             const templateId = document.getElementById("templateSelect").value;
@@ -823,19 +1066,21 @@
             emailSubject.textContent = "Тема: " + template.subject;
             
             // Добавление полей из шаблона
-            template.fields.forEach(field => {
-                const fieldHtml = `
-                    <div class="form-group">
-                        <label for="${field.id}">${field.label}</label>
-                        <span class="tooltip">ℹ️
-                            <span class="tooltip-text">Введите в любом формате - система преобразует автоматически</span>
-                        </span>
-                        <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
-                        ${field.hint ? `<div class="field-hint">${field.hint}</div>` : ''}
-                    </div>
-                `;
-                dynamicFieldsContainer.innerHTML += fieldHtml;
-            });
+            if (template.fields && template.fields.length > 0) {
+                template.fields.forEach(field => {
+                    const fieldHtml = `
+                        <div class="form-group">
+                            <label for="${field.id}">${field.label}</label>
+                            <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
+                            <div class="tooltip">ℹ️
+                                <span class="tooltip-text">Введите значение в любом формате - система обработает его автоматически</span>
+                            </div>
+                            ${field.hint ? `<div class="field-hint">${field.hint}</div>` : ''}
+                        </div>
+                    `;
+                    dynamicFieldsContainer.innerHTML += fieldHtml;
+                });
+            }
             
             // Генерация письма
             generateEmail();
@@ -897,8 +1142,9 @@
             // Добавляем основной текст
             emailText += templateText;
             
-            // Добавляем стандартный футер, если он нужен
-            if (!template.noStandardFooter) {
+            // Добавляем стандартный футер, если он нужен и включен чекбокс
+            const includeFooter = document.getElementById("includeFooterCheck").checked;
+            if (includeFooter && !template.noStandardFooter) {
                 emailText += standardFooter;
             }
             
@@ -954,7 +1200,7 @@
             let category = document.getElementById("newTemplateCategory").value;
             const text = document.getElementById("newTemplateText").value.trim();
             const subject = document.getElementById("newTemplateSubject").value.trim();
-            const includeFooter = document.getElementById("includeFooterCheck").checked;
+            const includeFooter = document.getElementById("newTemplateFooterCheck").checked;
             
             // Проверка на заполненность полей
             if (!name || !text || !subject) {
@@ -1020,13 +1266,13 @@
             document.getElementById("newTemplateCategory").value = "Прочие запросы";
             document.getElementById("newTemplateText").value = "";
             document.getElementById("newTemplateSubject").value = "";
-            document.getElementById("includeFooterCheck").checked = true;
+            document.getElementById("newTemplateFooterCheck").checked = true;
             
             // Показываем сообщение об успешном сохранении
             alert("Шаблон успешно сохранен!");
             
             // Переключаемся на вкладку с шаблонами
-            switchTab('templates');
+            switchTab('select');
         }
         
         // Обновление выпадающего списка с пользовательскими шаблонами
@@ -1036,6 +1282,14 @@
             
             // Очищаем существующие пользовательские шаблоны
             customTemplatesGroup.innerHTML = "";
+            
+            if (userTemplates.length === 0) {
+                // Если нет пользовательских шаблонов, скрываем группу
+                customTemplatesGroup.style.display = "none";
+                return;
+            }
+            
+            customTemplatesGroup.style.display = "";
             
             // Группируем пользовательские шаблоны по категориям
             const categories = {};
@@ -1047,11 +1301,11 @@
             });
             
             // Добавляем шаблоны, сгруппированные по категориям
-            Object.keys(categories).forEach(category => {
+            Object.keys(categories).sort().forEach(category => {
                 const categoryOptgroup = document.createElement("optgroup");
                 categoryOptgroup.label = `${category} (пользовательские)`;
                 
-                categories[category].forEach(template => {
+                categories[category].sort((a, b) => a.name.localeCompare(b.name)).forEach(template => {
                     const option = document.createElement("option");
                     option.value = template.id;
                     option.textContent = template.name;
@@ -1060,9 +1314,6 @@
                 
                 customTemplatesGroup.appendChild(categoryOptgroup);
             });
-            
-            // Также обновляем список шаблонов на вкладке управления
-            updateUserTemplatesList();
         }
         
         // Обновление списка пользовательских шаблонов на вкладке управления
@@ -1071,7 +1322,7 @@
             const userTemplatesList = document.getElementById("userTemplatesList");
             
             if (userTemplates.length === 0) {
-                userTemplatesList.innerHTML = "<p style='color: var(--text-secondary); text-align: center; padding: 20px;'>У вас пока нет сохраненных шаблонов.</p>";
+                userTemplatesList.innerHTML = "<p style='text-align: center; color: var(--text-secondary);'>У вас пока нет сохраненных шаблонов.</p>";
                 return;
             }
             
@@ -1089,23 +1340,22 @@
             
             Object.keys(categories).sort().forEach(category => {
                 html += `<div class="template-category">
-                    <div class="category-name">${category}</div>
-                    <div class="category-templates">`;
+                    <div class="category-name">${category}</div>`;
                 
-                categories[category].forEach(template => {
+                categories[category].sort((a, b) => a.name.localeCompare(b.name)).forEach(template => {
                     html += `
                         <div class="template-item" data-id="${template.id}">
                             <div class="template-name">${template.name}</div>
                             <div class="template-subject">Тема: ${template.subject}</div>
-                            <div class="template-action-buttons">
-                                <button class="action-button edit" onclick="editTemplate('${template.id}')">✏️ Редактировать</button>
-                                <button class="action-button delete" onclick="deleteTemplate('${template.id}')">🗑️ Удалить</button>
+                            <div class="template-actions">
+                                <button class="template-action edit" onclick="editTemplate('${template.id}')">✏️ Редактировать</button>
+                                <button class="template-action delete" onclick="deleteTemplate('${template.id}')">🗑️ Удалить</button>
                             </div>
                         </div>
                     `;
                 });
                 
-                html += `</div></div>`;
+                html += `</div>`;
             });
             
             userTemplatesList.innerHTML = html;
@@ -1119,6 +1369,7 @@
                 saveUserTemplates(updatedTemplates);
                 
                 // Обновляем интерфейс
+                updateUserTemplatesList();
                 updateCustomTemplatesDropdown();
                 
                 // Если текущий выбранный шаблон - это удаляемый шаблон, сбрасываем выбор
@@ -1132,6 +1383,12 @@
         
         // Редактирование шаблона
         function editTemplate(id) {
+            // Сначала закрываем модальное окно
+            closeSettingsModal();
+            
+            // Переключаемся на вкладку создания
+            switchTab('create');
+            
             const userTemplates = getUserTemplates();
             const template = userTemplates.find(t => t.id === id);
             
@@ -1140,15 +1397,12 @@
                 return;
             }
             
-            // Переключаемся на вкладку создания
-            switchTab('create');
-            
             // Заполняем форму данными шаблона
             document.getElementById("newTemplateName").value = template.name;
             document.getElementById("newTemplateCategory").value = template.category;
             document.getElementById("newTemplateText").value = template.text;
             document.getElementById("newTemplateSubject").value = template.subject;
-            document.getElementById("includeFooterCheck").checked = !template.noStandardFooter;
+            document.getElementById("newTemplateFooterCheck").checked = !template.noStandardFooter;
             
             // Добавляем скрытое поле для ID редактируемого шаблона
             let editIdField = document.getElementById("editTemplateId");
@@ -1161,13 +1415,13 @@
             editIdField.value = id;
             
             // Меняем текст кнопки на "Обновить шаблон"
-            document.querySelector(".new-template-button").innerHTML = `
-                <span class="emoji">💾</span>
+            document.querySelector("#createTab .copy-button").innerHTML = `
+                <span class="emoji">🔄</span>
                 <span>Обновить шаблон</span>
             `;
             
             // Меняем функцию на обновление
-            document.querySelector(".new-template-button").onclick = updateExistingTemplate;
+            document.querySelector("#createTab .copy-button").onclick = updateExistingTemplate;
         }
         
         // Обновление существующего шаблона
@@ -1177,7 +1431,7 @@
             let category = document.getElementById("newTemplateCategory").value;
             const text = document.getElementById("newTemplateText").value.trim();
             const subject = document.getElementById("newTemplateSubject").value.trim();
-            const includeFooter = document.getElementById("includeFooterCheck").checked;
+            const includeFooter = document.getElementById("newTemplateFooterCheck").checked;
             
             // Проверка на заполненность полей
             if (!name || !text || !subject) {
@@ -1244,40 +1498,107 @@
             document.getElementById("newTemplateCategory").value = "Прочие запросы";
             document.getElementById("newTemplateText").value = "";
             document.getElementById("newTemplateSubject").value = "";
-            document.getElementById("includeFooterCheck").checked = true;
+            document.getElementById("newTemplateFooterCheck").checked = true;
             document.getElementById("editTemplateId").value = "";
             
             // Восстанавливаем кнопку и функцию
-            document.querySelector(".new-template-button").innerHTML = `
+            document.querySelector("#createTab .copy-button").innerHTML = `
                 <span class="emoji">💾</span>
                 <span>Сохранить шаблон</span>
             `;
-            document.querySelector(".new-template-button").onclick = saveNewTemplate;
+            document.querySelector("#createTab .copy-button").onclick = saveNewTemplate;
             
             // Показываем сообщение об успешном обновлении
             alert("Шаблон успешно обновлен!");
             
-            // Переключаемся на вкладку управления
-            switchTab('manage');
+            // Переключаемся на вкладку с шаблонами
+            switchTab('select');
         }
         
-        // Переключение между вкладками
-        function switchTab(tabId) {
-            // Скрываем все вкладки
-            document.querySelectorAll(".tab-content").forEach(tab => {
-                tab.style.display = "none";
-            });
+        // Обновление данных для экспорта
+        function updateExportData() {
+            const userTemplates = getUserTemplates();
+            if (userTemplates.length === 0) {
+                document.getElementById("exportData").value = "У вас пока нет сохраненных шаблонов для экспорта.";
+                return;
+            }
             
-            // Показываем выбранную вкладку
-            document.getElementById(tabId + "Tab").style.display = "block";
+            document.getElementById("exportData").value = JSON.stringify(userTemplates);
+        }
+        
+        // Копирование кода экспорта
+        function copyExportData() {
+            const exportText = document.getElementById("exportData").value;
             
-            // Обновляем активную кнопку
-            document.querySelectorAll(".tab").forEach(tab => {
-                tab.classList.remove("active");
-                if (tab.dataset.tab === tabId) {
-                    tab.classList.add("active");
+            if (exportText === "У вас пока нет сохраненных шаблонов для экспорта.") {
+                alert("Нет данных для копирования!");
+                return;
+            }
+            
+            navigator.clipboard.writeText(exportText)
+                .then(() => {
+                    // Создаем всплывающее сообщение
+                    const message = document.createElement("div");
+                    message.className = "success-message";
+                    message.innerHTML = "<span class='emoji'>✅</span> Код экспорта скопирован!";
+                    document.body.appendChild(message);
+                    
+                    // Удаляем сообщение через 2 секунды
+                    setTimeout(() => {
+                        document.body.removeChild(message);
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Не удалось скопировать текст:', err);
+                    alert("Не удалось скопировать текст. Пожалуйста, выделите его вручную и нажмите Ctrl+C.");
+                });
+        }
+        
+        // Импорт шаблонов
+        function importTemplates() {
+            const importText = document.getElementById("importData").value.trim();
+            
+            if (!importText) {
+                alert("Пожалуйста, вставьте код экспорта шаблонов!");
+                return;
+            }
+            
+            try {
+                const importedTemplates = JSON.parse(importText);
+                
+                if (!Array.isArray(importedTemplates)) {
+                    throw new Error("Некорректный формат данных");
                 }
-            });
+                
+                // Проверяем структуру каждого шаблона
+                importedTemplates.forEach(template => {
+                    if (!template.id || !template.name || !template.subject || !template.text || !template.category) {
+                        throw new Error("Некорректный формат шаблона");
+                    }
+                });
+                
+                // Получаем существующие шаблоны
+                const existingTemplates = getUserTemplates();
+                
+                // Объединяем шаблоны, избегая дубликатов по ID
+                const existingIds = new Set(existingTemplates.map(t => t.id));
+                const newTemplates = importedTemplates.filter(t => !existingIds.has(t.id));
+                
+                const updatedTemplates = [...existingTemplates, ...newTemplates];
+                saveUserTemplates(updatedTemplates);
+                
+                // Обновляем интерфейс
+                updateCustomTemplatesDropdown();
+                updateUserTemplatesList();
+                
+                // Очищаем поле ввода
+                document.getElementById("importData").value = "";
+                
+                // Показываем сообщение об успешном импорте
+                alert(`Успешно импортировано ${newTemplates.length} новых шаблонов!`);
+            } catch (e) {
+                alert("Ошибка при импорте шаблонов: " + e.message);
+            }
         }
         
         // Инициализация при загрузке страницы
@@ -1289,12 +1610,27 @@
                 });
             });
             
+            // Добавляем обработчики для вкладок модального окна
+            document.querySelectorAll(".modal-tab").forEach(tab => {
+                tab.addEventListener("click", function() {
+                    switchModalTab(this.dataset.tab);
+                });
+            });
+            
             // Обработчик для новой категории
             document.getElementById("newTemplateCategory").addEventListener("change", function() {
                 if (this.value === "new-category") {
                     document.getElementById("newCategoryGroup").style.display = "block";
                 } else {
                     document.getElementById("newCategoryGroup").style.display = "none";
+                }
+            });
+            
+            // Закрытие модального окна при клике вне его
+            window.addEventListener("click", function(event) {
+                const modal = document.getElementById("settingsModal");
+                if (event.target === modal) {
+                    closeSettingsModal();
                 }
             });
             
