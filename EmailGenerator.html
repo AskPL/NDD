@@ -76,6 +76,17 @@
             line-height: 1.4;
         }
         
+        .variable-list {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            line-height: 1.6;
+            background-color: rgba(255, 152, 0, 0.05);
+            border-left: 3px solid var(--primary-color);
+            padding: 10px;
+            border-radius: 0 5px 5px 0;
+        }
+        
         .info-icon {
             display: inline-block;
             color: #007BFF;
@@ -133,6 +144,31 @@
             color: var(--text-secondary);
             font-style: italic;
             font-size: 14px;
+        }
+        
+        /* Стилизация полей ввода */
+        input, select, textarea {
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+            outline: none;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.5;
         }
         
         /* Модальное окно */
@@ -448,7 +484,13 @@
                                 <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
                             </div>
                         </div>
-                        <div class="field-hint">Доступные переменные: {{orderNumber}}, {{pvzAddress}}, а также любые собственные в формате {{переменная}}</div>
+                        <div class="variable-list">
+                            <strong>Доступные переменные:</strong>
+                            <div>• {{orderNumber}} - номер заказа</div>
+                            <div>• {{pvzAddress}} - адрес пункта выдачи</div>
+                            <div>• {{имяПеременной}} - любые собственные переменные</div>
+                            <div>• {{dateTime}}, {{deliveryDateTime}}, {{closedDate}} и т.д. - переменные с датой/временем (автоматически конвертируются в нужный формат)</div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
