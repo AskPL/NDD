@@ -9,30 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="ndd-styles.css">
     <style>
-        :root {
-            --primary-color: #FF9800;
-            --primary-dark: #F57C00;
-            --primary-light: #FFE0B2;
-            --accent-color: #FF5722;
-            --error-color: #F44336;
-            --success-color: #4CAF50;
-            --warning-color: #FFC107;
-            
-            --bg-color: #121212;
-            --card-bg-color: #1E1E1E;
-            --input-bg-color: #2C2C2C;
-            --border-color: #424242;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            
-            --text-primary: #FFFFFF;
-            --text-secondary: #B0B0B0;
-            --text-accent: #90CAF9;
-        }
-
         .container {
             max-width: 1200px;
             width: 95%;
-            padding: 25px;
         }
         
         .email-generator {
@@ -42,7 +21,7 @@
         }
         
         .form-panel, .preview-panel {
-            background: var(--card-bg-color);
+            background-color: var(--card-bg-color);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 20px;
@@ -59,56 +38,23 @@
         }
         
         .panel-header {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 20px;
         }
         
         .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .panel-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .tab-controls {
-            display: flex;
-            gap: 5px;
-            background: var(--input-bg-color);
-            border-radius: 8px;
-            padding: 3px;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 10px 15px;
-            border-radius: 5px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-        
-        .tab.active {
-            background: var(--primary-color);
-            color: #000;
-            font-weight: 600;
-        }
-        
         #emailPreview {
-            background: var(--input-bg-color);
+            background-color: var(--input-bg-color);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -123,39 +69,6 @@
             flex-grow: 1;
         }
         
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-        
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg-color);
-            color: var(--text-primary);
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        
         .field-hint {
             font-size: 12px;
             color: var(--text-secondary);
@@ -163,13 +76,15 @@
             line-height: 1.4;
         }
         
-        .tooltip {
-            position: relative;
+        .info-icon {
             display: inline-block;
-            margin-left: 5px;
-            font-size: 14px;
             color: var(--text-secondary);
             cursor: help;
+            font-size: 14px;
+            margin-left: 5px;
+            position: absolute;
+            right: 10px;
+            top: 10px;
         }
         
         .tooltip-text {
@@ -187,15 +102,18 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.3s;
-            font-weight: normal;
             border: 1px solid var(--border-color);
             font-size: 12px;
             line-height: 1.4;
         }
         
-        .tooltip:hover .tooltip-text {
+        .info-icon:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
+        }
+        
+        .input-wrapper {
+            position: relative;
         }
         
         .panel-actions {
@@ -205,58 +123,10 @@
             margin-top: 10px;
         }
         
-        .copy-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: black;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-        }
-        
-        .copy-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
-        }
-        
         .subject-line {
             color: var(--text-secondary);
             font-style: italic;
             font-size: 14px;
-        }
-        
-        .success-message {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--success-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
-            opacity: 0;
-            z-index: 100;
-            font-size: 14px;
-        }
-        
-        /* Иконка шестеренки */
-        .settings-icon {
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .settings-icon:hover {
-            color: var(--primary-color);
-            transform: rotate(45deg);
         }
         
         /* Модальное окно */
@@ -306,6 +176,34 @@
             color: var(--primary-color);
         }
         
+        .tab-controls {
+            display: flex;
+            background-color: var(--input-bg-color);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border: none;
+            background-color: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab.active {
+            background-color: var(--primary-color);
+            color: black;
+            font-weight: 600;
+        }
+        
         .modal-tabs {
             display: flex;
             gap: 10px;
@@ -315,7 +213,7 @@
         .modal-tab {
             padding: 8px 15px;
             border-radius: 5px;
-            background: var(--input-bg-color);
+            background-color: var(--input-bg-color);
             border: none;
             cursor: pointer;
             font-size: 14px;
@@ -323,7 +221,7 @@
         }
         
         .modal-tab.active {
-            background: var(--primary-color);
+            background-color: var(--primary-color);
             color: black;
             font-weight: 500;
         }
@@ -343,7 +241,7 @@
         
         .template-item {
             padding: 12px;
-            background: var(--input-bg-color);
+            background-color: var(--input-bg-color);
             border-radius: 8px;
             margin-bottom: 10px;
         }
@@ -365,31 +263,6 @@
             gap: 10px;
         }
         
-        .template-action {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-        
-        .template-action:hover {
-            background: var(--border-color);
-            color: var(--text-primary);
-        }
-        
-        .template-action.edit {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-        
-        .template-action.delete {
-            border-color: var(--error-color);
-            color: var(--error-color);
-        }
-        
         /* Адаптивный дизайн */
         @media (max-width: 900px) {
             .email-generator {
@@ -403,16 +276,6 @@
             .modal-content {
                 width: 90%;
             }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -437,9 +300,7 @@
                     <div class="panel-title">
                         <span class="emoji">📝</span>Параметры письма
                     </div>
-                    <div class="panel-controls">
-                        <div class="settings-icon" onclick="openSettingsModal()">⚙️</div>
-                    </div>
+                    <div class="settings-icon" onclick="openSettingsModal()">⚙️</div>
                 </div>
                 
                 <!-- Табы для выбора шаблона/создания нового -->
@@ -501,18 +362,22 @@
                     <!-- Базовые поля, которые нужны почти во всех шаблонах -->
                     <div class="form-group">
                         <label for="orderNumber">Номер заказа:</label>
-                        <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
-                        <div class="tooltip">ℹ️
-                            <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
+                        <div class="input-wrapper">
+                            <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
+                            <div class="info-icon">ℹ️
+                                <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
+                            </div>
                         </div>
                         <div class="field-hint">Укажите полный номер заказа, включая префикс LO при необходимости</div>
                     </div>
                     
                     <div class="form-group">
                         <label for="pvzAddress">Адрес ПВЗ:</label>
-                        <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
-                        <div class="tooltip">ℹ️
-                            <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
+                        <div class="input-wrapper">
+                            <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
+                            <div class="info-icon">ℹ️
+                                <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
+                            </div>
                         </div>
                         <div class="field-hint">Введите полный адрес включая город, улицу, дом и другие важные детали</div>
                     </div>
@@ -536,9 +401,11 @@
                 <div class="tab-content" id="createTab" style="display:none;">
                     <div class="form-group">
                         <label for="newTemplateName">Название шаблона:</label>
-                        <input type="text" id="newTemplateName" placeholder="Например: Запрос видео при краже">
-                        <div class="tooltip">ℹ️
-                            <span class="tooltip-text">Укажите краткое, но информативное название для быстрого поиска</span>
+                        <div class="input-wrapper">
+                            <input type="text" id="newTemplateName" placeholder="Например: Запрос видео при краже">
+                            <div class="info-icon">ℹ️
+                                <span class="tooltip-text">Укажите краткое, но информативное название для быстрого поиска</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -562,9 +429,11 @@
                     
                     <div class="form-group">
                         <label for="newTemplateText">Текст шаблона:</label>
-                        <textarea id="newTemplateText" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
-                        <div class="tooltip">ℹ️
-                            <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
+                        <div class="input-wrapper">
+                            <textarea id="newTemplateText" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
+                            <div class="info-icon">ℹ️
+                                <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
+                            </div>
                         </div>
                         <div class="field-hint">Доступные переменные: {{orderNumber}}, {{pvzAddress}}, а также любые собственные в формате {{переменная}}</div>
                     </div>
@@ -584,7 +453,7 @@
                         </label>
                     </div>
                     
-                    <button class="copy-button" onclick="saveNewTemplate()">
+                    <button class="button" onclick="saveNewTemplate()">
                         <span class="emoji">💾</span>
                         <span>Сохранить шаблон</span>
                     </button>
@@ -604,7 +473,7 @@
                 <div class="panel-actions">
                     <div id="emailSubject" class="subject-line"></div>
                     
-                    <button class="copy-button" onclick="copyEmail()">
+                    <button class="button" onclick="copyEmail()">
                         <span class="emoji">📋</span>
                         <span>Скопировать</span>
                     </button>
@@ -634,7 +503,7 @@
                     <div class="form-group">
                         <label for="exportData">Экспорт шаблонов:</label>
                         <textarea id="exportData" readonly onclick="this.select()"></textarea>
-                        <button class="copy-button" style="margin-top: 10px;" onclick="copyExportData()">
+                        <button class="button" style="margin-top: 10px;" onclick="copyExportData()">
                             <span class="emoji">📋</span>
                             <span>Скопировать код</span>
                         </button>
@@ -643,7 +512,7 @@
                     <div class="form-group" style="margin-top: 20px;">
                         <label for="importData">Импорт шаблонов:</label>
                         <textarea id="importData" placeholder="Вставьте сюда код экспорта шаблонов"></textarea>
-                        <button class="copy-button" style="margin-top: 10px;" onclick="importTemplates()">
+                        <button class="button" style="margin-top: 10px;" onclick="importTemplates()">
                             <span class="emoji">📥</span>
                             <span>Импортировать</span>
                         </button>
@@ -1071,9 +940,11 @@
                     const fieldHtml = `
                         <div class="form-group">
                             <label for="${field.id}">${field.label}</label>
-                            <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
-                            <div class="tooltip">ℹ️
-                                <span class="tooltip-text">Введите значение в любом формате - система обработает его автоматически</span>
+                            <div class="input-wrapper">
+                                <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
+                                <div class="info-icon">ℹ️
+                                    <span class="tooltip-text">Введите значение в любом формате - система обработает его автоматически</span>
+                                </div>
                             </div>
                             ${field.hint ? `<div class="field-hint">${field.hint}</div>` : ''}
                         </div>
@@ -1348,8 +1219,8 @@
                             <div class="template-name">${template.name}</div>
                             <div class="template-subject">Тема: ${template.subject}</div>
                             <div class="template-actions">
-                                <button class="template-action edit" onclick="editTemplate('${template.id}')">✏️ Редактировать</button>
-                                <button class="template-action delete" onclick="deleteTemplate('${template.id}')">🗑️ Удалить</button>
+                                <button class="button" onclick="editTemplate('${template.id}')">✏️ Редактировать</button>
+                                <button class="button" onclick="deleteTemplate('${template.id}')">🗑️ Удалить</button>
                             </div>
                         </div>
                     `;
@@ -1415,13 +1286,13 @@
             editIdField.value = id;
             
             // Меняем текст кнопки на "Обновить шаблон"
-            document.querySelector("#createTab .copy-button").innerHTML = `
+            document.querySelector("#createTab .button").innerHTML = `
                 <span class="emoji">🔄</span>
                 <span>Обновить шаблон</span>
             `;
             
             // Меняем функцию на обновление
-            document.querySelector("#createTab .copy-button").onclick = updateExistingTemplate;
+            document.querySelector("#createTab .button").onclick = updateExistingTemplate;
         }
         
         // Обновление существующего шаблона
@@ -1502,11 +1373,11 @@
             document.getElementById("editTemplateId").value = "";
             
             // Восстанавливаем кнопку и функцию
-            document.querySelector("#createTab .copy-button").innerHTML = `
+            document.querySelector("#createTab .button").innerHTML = `
                 <span class="emoji">💾</span>
                 <span>Сохранить шаблон</span>
             `;
-            document.querySelector("#createTab .copy-button").onclick = saveNewTemplate;
+            document.querySelector("#createTab .button").onclick = saveNewTemplate;
             
             // Показываем сообщение об успешном обновлении
             alert("Шаблон успешно обновлен!");
