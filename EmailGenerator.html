@@ -78,13 +78,19 @@
         
         .info-icon {
             display: inline-block;
-            color: var(--text-secondary);
+            color: #007BFF;
             cursor: help;
             font-size: 14px;
             margin-left: 5px;
             position: absolute;
             right: 10px;
             top: 10px;
+            background-color: transparent;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
         }
         
         .tooltip-text {
@@ -176,54 +182,34 @@
             color: var(--primary-color);
         }
         
-        .tab-controls {
-            display: flex;
-            background-color: var(--input-bg-color);
-            border-radius: 8px;
-            padding: 3px;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            border: none;
-            background-color: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-        }
-        
-        .tab.active {
-            background-color: var(--primary-color);
-            color: black;
-            font-weight: 600;
-        }
-        
-        .modal-tabs {
+        .tab-buttons-container {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
         
-        .modal-tab {
-            padding: 8px 15px;
-            border-radius: 5px;
-            background-color: var(--input-bg-color);
+        .tab-button {
+            flex: 1;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: black;
             border: none;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
-            font-size: 14px;
-            color: var(--text-secondary);
+            transition: all 0.3s ease;
         }
         
-        .modal-tab.active {
-            background-color: var(--primary-color);
-            color: black;
-            font-weight: 500;
+        .tab-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-dark));
+            color: white;
         }
         
         .template-category {
@@ -276,6 +262,33 @@
             .modal-content {
                 width: 90%;
             }
+            
+            .tab-buttons-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* Индикатор успеха */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 2000;
+            font-size: 14px;
+            font-weight: 500;
+            animation: fadeInOut 3s forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            70% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
         }
     </style>
 </head>
@@ -303,10 +316,10 @@
                     <div class="settings-icon" onclick="openSettingsModal()">⚙️</div>
                 </div>
                 
-                <!-- Табы для выбора шаблона/создания нового -->
-                <div class="tab-controls">
-                    <button class="tab active" data-tab="select">Выбрать шаблон</button>
-                    <button class="tab" data-tab="create">Создать новый</button>
+                <!-- Кнопки выбора вкладок -->
+                <div class="tab-buttons-container">
+                    <button class="tab-button active" onclick="switchTab('select')">Выбрать шаблон</button>
+                    <button class="tab-button" onclick="switchTab('create')">Создать новый</button>
                 </div>
                 
                 <!-- Содержимое вкладки выбора шаблона -->
@@ -364,7 +377,7 @@
                         <label for="orderNumber">Номер заказа:</label>
                         <div class="input-wrapper">
                             <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
-                            <div class="info-icon">ℹ️
+                            <div class="info-icon">i
                                 <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
                             </div>
                         </div>
@@ -375,7 +388,7 @@
                         <label for="pvzAddress">Адрес ПВЗ:</label>
                         <div class="input-wrapper">
                             <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
-                            <div class="info-icon">ℹ️
+                            <div class="info-icon">i
                                 <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
                             </div>
                         </div>
@@ -403,7 +416,7 @@
                         <label for="newTemplateName">Название шаблона:</label>
                         <div class="input-wrapper">
                             <input type="text" id="newTemplateName" placeholder="Например: Запрос видео при краже">
-                            <div class="info-icon">ℹ️
+                            <div class="info-icon">i
                                 <span class="tooltip-text">Укажите краткое, но информативное название для быстрого поиска</span>
                             </div>
                         </div>
@@ -431,7 +444,7 @@
                         <label for="newTemplateText">Текст шаблона:</label>
                         <div class="input-wrapper">
                             <textarea id="newTemplateText" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
-                            <div class="info-icon">ℹ️
+                            <div class="info-icon">i
                                 <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
                             </div>
                         </div>
@@ -487,9 +500,9 @@
                 <span class="close-modal" onclick="closeSettingsModal()">&times;</span>
                 <div class="modal-header">Управление шаблонами</div>
                 
-                <div class="modal-tabs">
-                    <button class="modal-tab active" data-tab="userTemplates">Мои шаблоны</button>
-                    <button class="modal-tab" data-tab="import">Импорт/Экспорт</button>
+                <div class="tab-buttons-container">
+                    <button class="tab-button active" id="userTemplatesTabBtn" onclick="switchModalTab('userTemplates')">Мои шаблоны</button>
+                    <button class="tab-button" id="importTabBtn" onclick="switchModalTab('import')">Импорт/Экспорт</button>
                 </div>
                 
                 <div class="modal-tab-content" id="userTemplatesTab">
@@ -872,9 +885,9 @@
             document.getElementById(tabId + "Tab").style.display = "block";
             
             // Обновляем активную кнопку
-            document.querySelectorAll(".tab").forEach(tab => {
+            document.querySelectorAll(".tab-button").forEach(tab => {
                 tab.classList.remove("active");
-                if (tab.dataset.tab === tabId) {
+                if (tab.dataset.tab === tabId || tab.innerText.toLowerCase().includes(tabId)) {
                     tab.classList.add("active");
                 }
             });
@@ -902,10 +915,11 @@
             document.getElementById(tabId + "Tab").style.display = "block";
             
             // Обновляем активную кнопку
-            document.querySelectorAll(".modal-tab").forEach(tab => {
-                tab.classList.remove("active");
-                if (tab.dataset.tab === tabId) {
+            document.querySelectorAll(".modal-tab, .tab-button").forEach(tab => {
+                if (tab.id === tabId + "TabBtn") {
                     tab.classList.add("active");
+                } else {
+                    tab.classList.remove("active");
                 }
             });
             
@@ -942,7 +956,7 @@
                             <label for="${field.id}">${field.label}</label>
                             <div class="input-wrapper">
                                 <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
-                                <div class="info-icon">ℹ️
+                                <div class="info-icon">i
                                     <span class="tooltip-text">Введите значение в любом формате - система обработает его автоматически</span>
                                 </div>
                             </div>
@@ -1140,10 +1154,22 @@
             document.getElementById("newTemplateFooterCheck").checked = true;
             
             // Показываем сообщение об успешном сохранении
-            alert("Шаблон успешно сохранен!");
+            showSuccessMessage("Шаблон успешно сохранен!");
             
             // Переключаемся на вкладку с шаблонами
             switchTab('select');
+        }
+        
+        // Показ всплывающего сообщения об успехе
+        function showSuccessMessage(message) {
+            const messageElement = document.createElement("div");
+            messageElement.className = "success-message";
+            messageElement.innerHTML = `<span class="emoji">✅</span> ${message}`;
+            document.body.appendChild(messageElement);
+            
+            setTimeout(() => {
+                messageElement.remove();
+            }, 3000);
         }
         
         // Обновление выпадающего списка с пользовательскими шаблонами
@@ -1249,6 +1275,8 @@
                     document.getElementById("emailPreview").textContent = "Выберите шаблон письма и заполните необходимые поля слева, чтобы увидеть результат.";
                     document.getElementById("dynamicFields").innerHTML = "";
                 }
+                
+                showSuccessMessage("Шаблон удален");
             }
         }
         
@@ -1380,7 +1408,7 @@
             document.querySelector("#createTab .button").onclick = saveNewTemplate;
             
             // Показываем сообщение об успешном обновлении
-            alert("Шаблон успешно обновлен!");
+            showSuccessMessage("Шаблон успешно обновлен!");
             
             // Переключаемся на вкладку с шаблонами
             switchTab('select');
@@ -1408,16 +1436,7 @@
             
             navigator.clipboard.writeText(exportText)
                 .then(() => {
-                    // Создаем всплывающее сообщение
-                    const message = document.createElement("div");
-                    message.className = "success-message";
-                    message.innerHTML = "<span class='emoji'>✅</span> Код экспорта скопирован!";
-                    document.body.appendChild(message);
-                    
-                    // Удаляем сообщение через 2 секунды
-                    setTimeout(() => {
-                        document.body.removeChild(message);
-                    }, 2000);
+                    showSuccessMessage("Код экспорта скопирован!");
                 })
                 .catch(err => {
                     console.error('Не удалось скопировать текст:', err);
@@ -1466,7 +1485,7 @@
                 document.getElementById("importData").value = "";
                 
                 // Показываем сообщение об успешном импорте
-                alert(`Успешно импортировано ${newTemplates.length} новых шаблонов!`);
+                showSuccessMessage(`Успешно импортировано ${newTemplates.length} шаблонов!`);
             } catch (e) {
                 alert("Ошибка при импорте шаблонов: " + e.message);
             }
@@ -1474,18 +1493,13 @@
         
         // Инициализация при загрузке страницы
         document.addEventListener("DOMContentLoaded", function() {
-            // Добавляем обработчики для вкладок
-            document.querySelectorAll(".tab").forEach(tab => {
-                tab.addEventListener("click", function() {
-                    switchTab(this.dataset.tab);
-                });
+            // Установка обработчиков для модальных вкладок
+            document.getElementById("userTemplatesTabBtn").addEventListener("click", function() {
+                switchModalTab("userTemplates");
             });
             
-            // Добавляем обработчики для вкладок модального окна
-            document.querySelectorAll(".modal-tab").forEach(tab => {
-                tab.addEventListener("click", function() {
-                    switchModalTab(this.dataset.tab);
-                });
+            document.getElementById("importTabBtn").addEventListener("click", function() {
+                switchModalTab("import");
             });
             
             // Обработчик для новой категории
