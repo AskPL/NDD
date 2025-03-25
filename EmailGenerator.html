@@ -1,96 +1,4 @@
-/* Стили для секции видео-запросов */
-        .video-checkboxes {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .date-time-input {
-            margin-left: 30px;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            border-left: 2px solid var(--primary-color);
-            animation: fadeIn 0.3s ease;
-        }
-        
-        input[type="time"] {
-            background-color: var(--input-bg-color);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 14px 16px;
-            border-radius: 12px;
-            width: 100%;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
-            font-family: 'Montserrat', sans-serif;
-        }            // Инициализация переключателя маршрутов и кнопки видео
-            const routeToggle = document.getElementById('routeToggle');
-            const videoButton = document.getElementById('videoButton');
-            const directRadio = document.getElementById('directRadio');
-            const returnRadio = document.getElementById('returnRadio');
-            const videoRadio = document.getElementById('videoRadio');
-            
-            // Обработчик для переключения типа маршрута
-            routeToggle.querySelectorAll('.route-toggle-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const type = this.getAttribute('data-type');
-                    
-                    // Снимаем активацию с кнопки видео
-                    videoButton.classList.remove('active');
-                    
-                    // Устанавливаем тип маршрута
-                    if (type === 'direct') {
-                        routeToggle.className = 'route-toggle direct';
-                        directRadio.checked = true;
-                        currentRequestType = 'direct';
-                    } else {
-                        routeToggle.className = 'route-toggle return';
-                        returnRadio.checked = true;
-                        currentRequestType = 'return';
-                    }
-                    
-                    // Эффект пульсации при клике
-                    const slider = routeToggle.querySelector('.route-toggle-slider');
-                    slider.style.animation = 'none';
-                    setTimeout(() => {
-                        slider.style.animation = 'pulse 0.4s ease';
-                    }, 10);
-                    
-                    // Обновляем дополнительные опции
-                    updateAdditionalOptions();
-                });
-            });
-            
-            // Обработчик для кнопки запроса видео
-            videoButton.addEventListener('click', function() {
-                // Активируем кнопку видео
-                this.classList.add('active');
-                
-                // Деактивируем оба выбора в слайдере маршрутов
-                routeToggle.className = 'route-toggle';
-                
-                // Устанавливаем тип запроса
-                videoRadio.checked = true;
-                currentRequestType = 'video';
-                
-                // Обновляем дополнительные опции
-                updateAdditionalOptions();
-            });
-            
-            // Обработчик смены типа ПВЗ
-            const pvzTypeToggle = document.getElementById('pvzTypeToggle');
-            pvzTypeToggle.addEventListener('click', function() {
-                if (this.classList.contains('avito')) {
-                    this.classList.remove('avito');
-                    this.classList.add('c2c');
-                    document.getElementById('finalRadio').checked = true;
-                    currentPvzType = 'final';
-                } else {
-                    this.classList.remove<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -143,10 +51,6 @@
         .copy-button:active {
             transform: translateY(0);
             box-shadow: 0 3px 8px rgba(255, 152, 0, 0.3);
-        }
-        
-        .copy-button:hover {
-            background-color: var(--primary-dark);
         }
         
         .preview-container {
@@ -327,6 +231,37 @@
         .triple-toggle input[type="radio"] {
             display: none;
         }
+        
+        /* Стили для секции видео-запросов */
+        .video-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .date-time-input {
+            margin-left: 30px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border-left: 2px solid var(--primary-color);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        input[type="time"] {
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -443,17 +378,14 @@
         };
         
         // Темы писем
-        let letterSubjects = {};
-        
-        // Содержимое выпадающих списков
-        let dropdownOptions = {};
-        
-        // Темы писем
         const letterSubjects = {
             direct: "Прямой маршрут. Запрос информации {orderNumber}",
             return: "Возвратный маршрут. Запрос информации {orderNumber}",
             video: "Запрос видеоматериалов {orderNumber}"
         };
+        
+        // Содержимое выпадающих списков
+        let dropdownOptions = {};
         
         // Инициализация при загрузке документа
         document.addEventListener("DOMContentLoaded", function() {
@@ -471,10 +403,12 @@
                     this.classList.remove('avito');
                     this.classList.add('c2c');
                     finalRadio.checked = true;
+                    currentPvzType = 'final';
                 } else {
                     this.classList.remove('c2c');
                     this.classList.add('avito');
                     dropoffRadio.checked = true;
+                    currentPvzType = 'dropoff';
                 }
                 
                 // Эффект пульсации при клике
