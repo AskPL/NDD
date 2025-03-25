@@ -262,6 +262,24 @@
             outline: none;
             font-family: 'Montserrat', sans-serif;
         }
+        
+        /* Стили для включения/исключения года */
+        .year-option {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .date-preview {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            display: inline-block;
+            animation: fadeIn 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -528,15 +546,19 @@
                         </label>
                         <div id="videoReceiptDate" class="date-time-input hidden">
                             <div class="form-group">
-                                <label for="receiptDate">Дата приема:</label>
-                                <div class="date-picker-wrap">
-                                    <input type="date" id="receiptDate">
+                                <label for="receiptDateInput">Введите дату в любом формате:</label>
+                                <input type="text" id="receiptDateInput" 
+                                    placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025">
+                            </div>
+                            <label class="checkbox-container year-option">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" id="receiptYearCheck" checked>
+                                    <span class="checkmark"></span>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="receiptTime">Примерное время:</label>
-                                <input type="time" id="receiptTime">
-                            </div>
+                                Оставить год
+                            </label>
+                            <div id="receiptDatePreview" class="date-preview hidden"></div>
+                            <button type="button" class="option-button" onclick="convertCustomDate('receipt')">Применить</button>
                         </div>
                         
                         <label class="checkbox-container">
@@ -548,15 +570,19 @@
                         </label>
                         <div id="videoShippingDate" class="date-time-input hidden">
                             <div class="form-group">
-                                <label for="shippingDate">Дата отгрузки:</label>
-                                <div class="date-picker-wrap">
-                                    <input type="date" id="shippingDate">
+                                <label for="shippingDateInput">Введите дату в любом формате:</label>
+                                <input type="text" id="shippingDateInput" 
+                                    placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025">
+                            </div>
+                            <label class="checkbox-container year-option">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" id="shippingYearCheck" checked>
+                                    <span class="checkmark"></span>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="shippingTime">Примерное время:</label>
-                                <input type="time" id="shippingTime">
-                            </div>
+                                Оставить год
+                            </label>
+                            <div id="shippingDatePreview" class="date-preview hidden"></div>
+                            <button type="button" class="option-button" onclick="convertCustomDate('shipping')">Применить</button>
                         </div>
                         
                         <label class="checkbox-container">
@@ -568,15 +594,19 @@
                         </label>
                         <div id="videoUnloadingDate" class="date-time-input hidden">
                             <div class="form-group">
-                                <label for="unloadingDate">Дата разгрузки:</label>
-                                <div class="date-picker-wrap">
-                                    <input type="date" id="unloadingDate">
+                                <label for="unloadingDateInput">Введите дату в любом формате:</label>
+                                <input type="text" id="unloadingDateInput" 
+                                    placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025">
+                            </div>
+                            <label class="checkbox-container year-option">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" id="unloadingYearCheck" checked>
+                                    <span class="checkmark"></span>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="unloadingTime">Примерное время:</label>
-                                <input type="time" id="unloadingTime">
-                            </div>
+                                Оставить год
+                            </label>
+                            <div id="unloadingDatePreview" class="date-preview hidden"></div>
+                            <button type="button" class="option-button" onclick="convertCustomDate('unloading')">Применить</button>
                         </div>
                         
                         <label class="checkbox-container">
@@ -588,15 +618,19 @@
                         </label>
                         <div id="videoDeliveryDate" class="date-time-input hidden">
                             <div class="form-group">
-                                <label for="deliveryDate">Дата выдачи:</label>
-                                <div class="date-picker-wrap">
-                                    <input type="date" id="deliveryDate">
+                                <label for="deliveryDateInput">Введите дату в любом формате:</label>
+                                <input type="text" id="deliveryDateInput" 
+                                    placeholder="Например: 20:26:14 04.03.25, 04.03.2025, 4 марта 2025">
+                            </div>
+                            <label class="checkbox-container year-option">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" id="deliveryYearCheck" checked>
+                                    <span class="checkmark"></span>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="deliveryTime">Примерное время:</label>
-                                <input type="time" id="deliveryTime">
-                            </div>
+                                Оставить год
+                            </label>
+                            <div id="deliveryDatePreview" class="date-preview hidden"></div>
+                            <button type="button" class="option-button" onclick="convertCustomDate('delivery')">Применить</button>
                         </div>
                     </div>
                 `;
@@ -668,15 +702,164 @@
             
             if (checkbox.checked) {
                 dateContainer.classList.remove('hidden');
-                
-                // Устанавливаем сегодняшнюю дату по умолчанию
-                const dateInput = dateContainer.querySelector('input[type="date"]');
-                if (dateInput) {
-                    dateInput.valueAsDate = new Date();
-                }
             } else {
                 dateContainer.classList.add('hidden');
             }
+        }
+        
+        // Функция для конвертации даты в пользовательский формат
+        function convertCustomDate(videoType) {
+            const inputElement = document.getElementById(`${videoType}DateInput`);
+            const includeYear = document.getElementById(`${videoType}YearCheck`).checked;
+            const previewElement = document.getElementById(`${videoType}DatePreview`);
+            
+            // Получаем введенное значение
+            const input = inputElement.value.trim();
+            if (!input) {
+                showDateError(previewElement, "Пожалуйста, введите дату");
+                return null;
+            }
+            
+            try {
+                let date, time, day, month, year;
+                
+                // Различные паттерны ввода - копируем из Timekonvert.html
+                
+                // 1. HH:mm:ss DD.MM.YY
+                if (/^\d{1,2}:\d{1,2}(:\d{1,2})?\s+\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    const [timePart, datePart] = input.split(/\s+/);
+                    time = timePart.split(':');
+                    [day, month, year] = datePart.split('.');
+                }
+                // 2. DD.MM.YYYY
+                else if (/^\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('.');
+                    time = ["00", "00"];
+                }
+                // 3. DD/MM/YYYY
+                else if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('/');
+                    time = ["00", "00"];
+                }
+                // 4. YYYY-MM-DD
+                else if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(input)) {
+                    [year, month, day] = input.split('-');
+                    time = ["00", "00"];
+                }
+                // 5. Словесное описание (например, "4 марта 2025")
+                else if (/^\d{1,2}\s+[а-яА-Я]+\s+\d{4}$/.test(input)) {
+                    const parts = input.split(/\s+/);
+                    day = parts[0];
+                    
+                    const monthNames = {
+                        'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
+                        'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
+                        'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
+                    };
+                    
+                    month = monthNames[parts[1].toLowerCase()];
+                    if (!month) {
+                        showDateError(previewElement, "Некорректное название месяца");
+                        return null;
+                    }
+                    
+                    year = parts[2];
+                    time = ["00", "00"];
+                }
+                // Если ничего не подошло, пробуем через Date.parse
+                else {
+                    try {
+                        date = new Date(input);
+                        if (isNaN(date.getTime())) {
+                            throw new Error("Неверный формат даты");
+                        }
+                        day = date.getDate();
+                        month = date.getMonth() + 1;
+                        year = date.getFullYear();
+                        time = [date.getHours().toString().padStart(2, '0'), 
+                                date.getMinutes().toString().padStart(2, '0')];
+                    } catch (e) {
+                        showDateError(previewElement, "Невозможно распознать формат даты");
+                        return null;
+                    }
+                }
+                
+                // Нормализация года
+                if (year && year.length === 2) {
+                    year = '20' + year;
+                }
+                
+                // Преобразуем строковые значения в числа
+                day = parseInt(day, 10);
+                month = parseInt(month, 10);
+                year = parseInt(year, 10);
+                
+                // Проверка валидности даты
+                if (month < 1 || month > 12 || day < 1 || day > 31) {
+                    showDateError(previewElement, "Некорректная дата. Проверьте месяц и день");
+                    return null;
+                }
+                
+                // Создаем объект Date для проверки валидности
+                date = new Date(year, month - 1, day);
+                if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+                    showDateError(previewElement, "Некорректная дата");
+                    return null;
+                }
+                
+                const months = [
+                    'января', 'февраля', 'марта', 
+                    'апреля', 'мая', 'июня',
+                    'июля', 'августа', 'сентября', 
+                    'октября', 'ноября', 'декабря'
+                ];
+                
+                // Форматируем результат с учетом параметра includeYear
+                let formattedDate;
+                if (time && time.length >= 2 && time[0] !== "00" && time[1] !== "00") {
+                    formattedDate = includeYear 
+                        ? `${day} ${months[month-1]} ${year} в ${time[0]}:${time[1]}`
+                        : `${day} ${months[month-1]} в ${time[0]}:${time[1]}`;
+                } else {
+                    formattedDate = includeYear 
+                        ? `${day} ${months[month-1]} ${year}`
+                        : `${day} ${months[month-1]}`;
+                }
+                
+                // Отображаем результат
+                previewElement.textContent = formattedDate;
+                previewElement.classList.remove('hidden');
+                
+                // Сохраняем дату в скрытое поле для дальнейшего использования
+                previewElement.setAttribute('data-formatted-date', formattedDate);
+                previewElement.setAttribute('data-full-date', JSON.stringify({
+                    day, month, year, time, 
+                    timestamp: date.getTime(),
+                    formatted: formattedDate
+                }));
+                
+                return {
+                    day, month, year, time,
+                    timestamp: date.getTime(),
+                    formatted: formattedDate
+                };
+            } catch (e) {
+                console.error("Ошибка при обработке даты:", e);
+                showDateError(previewElement, "Ошибка в формате даты");
+                return null;
+            }
+        }
+        
+        // Функция для отображения ошибки даты
+        function showDateError(element, message) {
+            element.textContent = message;
+            element.style.backgroundColor = 'var(--error-color)';
+            element.classList.remove('hidden');
+            
+            // Сбрасываем стиль через некоторое время
+            setTimeout(() => {
+                element.style.backgroundColor = 'var(--primary-color)';
+            }, 3000);
         }
         
         // Функция обновления подстатусов
@@ -817,18 +1000,11 @@
                     if (checkbox && checkbox.checked) {
                         hasVideoSelected = true;
                         
-                        const dateInput = document.getElementById(`${type.id}Date`);
-                        const timeInput = document.getElementById(`${type.id}Time`);
+                        const previewElement = document.getElementById(`${type.id}DatePreview`);
                         
                         let dateText = '';
-                        if (dateInput && dateInput.value) {
-                            const date = new Date(dateInput.value);
-                            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                            dateText = date.toLocaleDateString('ru-RU', options);
-                            
-                            if (timeInput && timeInput.value) {
-                                dateText += ` около ${timeInput.value}`;
-                            }
+                        if (previewElement && !previewElement.classList.contains('hidden')) {
+                            dateText = previewElement.getAttribute('data-formatted-date') || '';
                         }
                         
                         videoDetails += `- Видео ${type.name}`;
