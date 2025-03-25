@@ -11,19 +11,23 @@
     <style>
         .email-generator {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             margin-top: 25px;
         }
         
         .form-panel, .preview-panel {
-            flex: 1;
-            padding: 20px;
             background: var(--card-bg-color);
             border: 1px solid var(--border-color);
             border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .form-panel {
+            flex: 5;
         }
         
         .preview-panel {
+            flex: 6;
             display: flex;
             flex-direction: column;
         }
@@ -31,7 +35,7 @@
         .panel-header {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: var(--primary-color);
             display: flex;
             align-items: center;
@@ -43,14 +47,14 @@
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 15px;
-            min-height: 300px;
-            max-height: 500px;
+            padding: 20px;
+            min-height: 350px;
+            max-height: 600px;
             overflow-y: auto;
             margin-bottom: 15px;
             font-family: 'Montserrat', sans-serif;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             white-space: pre-wrap;
         }
         
@@ -72,6 +76,197 @@
             z-index: 100;
         }
         
+        .field-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .panel-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        .copy-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 152, 0, 0.3);
+        }
+        
+        .new-template-button {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .new-template-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.3);
+        }
+        
+        .template-editor {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 152, 0, 0.05);
+            border-radius: 8px;
+            border: 1px dashed var(--primary-color);
+        }
+        
+        .template-editor.active {
+            display: block;
+        }
+        
+        .template-editor textarea {
+            min-height: 150px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .template-category {
+            margin-bottom: 15px;
+        }
+        
+        .template-category .category-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            padding: 8px 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        optgroup {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 8px;
+            font-size: 14px;
+            color: var(--primary-color);
+            cursor: help;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: var(--card-bg-color);
+            color: var(--text-primary);
+            text-align: left;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .template-action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-button {
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .action-button.save {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        
+        .action-button.cancel {
+            background-color: var(--border-color);
+        }
+        
+        /* Адаптивный дизайн */
+        @media (max-width: 900px) {
+            .email-generator {
+                flex-direction: column;
+            }
+            
+            .form-panel, .preview-panel {
+                width: 100%;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -80,13 +275,6 @@
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
             to { opacity: 0; transform: translateY(-20px); }
-        }
-        
-        /* Адаптивный дизайн */
-        @media (max-width: 768px) {
-            .email-generator {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -111,45 +299,149 @@
                     <span class="emoji">📝</span>Параметры письма
                 </div>
                 
-                <!-- Выбор шаблона -->
-                <div class="form-group">
-                    <label for="templateSelect">Выберите шаблон:</label>
-                    <select id="templateSelect" onchange="updateDynamicFields()">
-                        <option value="" disabled selected>Выберите тип запроса...</option>
-                        <option value="delay_shipping">Задержка отгрузки</option>
-                        <option value="delay_return_shipping">Задержка отгрузки на возврат</option>
-                        <option value="not_accepted">Не принят заказ системно</option>
-                        <option value="not_accepting">Не принимают заказы на ПВЗ</option>
-                        <option value="damaged_receiving">Заказ поврежден - запрос видео приема</option>
-                        <option value="damaged_delivery">Заказ поврежден - запрос видео выдачи</option>
-                        <option value="mixed_orders">Перепутаны заказы</option>
-                        <option value="request_receipt">Запрос чека</option>
-                        <option value="how_to_find">Как найти ПВЗ</option>
-                        <option value="multi_box">Многоместный заказ</option>
-                        <option value="not_giving">Не выдают заказ</option>
-                        <option value="status_not_delivered">Не проставлен статус Доставлен</option>
-                        <option value="refused_on_spot">Отказ от заказа на месте</option>
-                        <option value="closed_delivered">ПВЗ закрыт, заказ выдан</option>
-                        <option value="closed_not_delivered">ПВЗ закрыт, заказ не выдан</option>
-                        <option value="closed_not_accepted">ПВЗ закрыт, заказ не сдали</option>
-                        <option value="request_app">Запрос АПП</option>
-                        <option value="need_remarketing">Заказ вернулся в точку А - нужна перемаркировка</option>
-                    </select>
+                <!-- Вкладки категорий -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="templates">Выбрать шаблон</div>
+                    <div class="tab" data-tab="create">Создать новый</div>
+                    <div class="tab" data-tab="manage">Управление шаблонами</div>
                 </div>
                 
-                <!-- Базовые поля, которые нужны почти во всех шаблонах -->
-                <div class="form-group">
-                    <label for="orderNumber">Номер заказа:</label>
-                    <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
+                <!-- Секция выбора шаблона -->
+                <div class="tab-content" id="templatesTab">
+                    <!-- Выбор шаблона -->
+                    <div class="form-group">
+                        <label for="templateSelect">Выберите шаблон:</label>
+                        <select id="templateSelect" onchange="updateDynamicFields()">
+                            <option value="" disabled selected>Выберите тип запроса...</option>
+                            
+                            <optgroup label="Проблемы с отгрузкой">
+                                <option value="delay_shipping">Задержка отгрузки</option>
+                                <option value="delay_return_shipping">Задержка отгрузки на возврат</option>
+                                <option value="request_app">Запрос АПП</option>
+                            </optgroup>
+                            
+                            <optgroup label="Проблемы с приемкой">
+                                <option value="not_accepted">Не принят заказ системно</option>
+                                <option value="not_accepting">Не принимают заказы на ПВЗ</option>
+                                <option value="closed_not_accepted">ПВЗ закрыт, заказ не сдали</option>
+                            </optgroup>
+                            
+                            <optgroup label="Проблемы с выдачей">
+                                <option value="not_giving">Не выдают заказ</option>
+                                <option value="status_not_delivered">Не проставлен статус Доставлен</option>
+                                <option value="refused_on_spot">Отказ от заказа на месте</option>
+                                <option value="closed_delivered">ПВЗ закрыт, заказ выдан</option>
+                                <option value="closed_not_delivered">ПВЗ закрыт, заказ не выдан</option>
+                                <option value="multi_box">Многоместный заказ</option>
+                            </optgroup>
+                            
+                            <optgroup label="Запросы видео">
+                                <option value="damaged_receiving">Заказ поврежден - запрос видео приема</option>
+                                <option value="damaged_delivery">Заказ поврежден - запрос видео выдачи</option>
+                                <option value="mixed_orders">Перепутаны заказы</option>
+                            </optgroup>
+                            
+                            <optgroup label="Запросы документов">
+                                <option value="request_receipt">Запрос чека</option>
+                            </optgroup>
+                            
+                            <optgroup label="Прочие запросы">
+                                <option value="how_to_find">Как найти ПВЗ</option>
+                                <option value="need_remarketing">Заказ вернулся в точку А - нужна перемаркировка</option>
+                            </optgroup>
+                            
+                            <optgroup label="Пользовательские шаблоны" id="customTemplates">
+                                <!-- Сюда будут добавляться пользовательские шаблоны -->
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <!-- Базовые поля, которые нужны почти во всех шаблонах -->
+                    <div class="form-group">
+                        <label for="orderNumber">Номер заказа:</label>
+                        <span class="tooltip">ℹ️
+                            <span class="tooltip-text">Введите номер заказа в формате LO123456789 для корректного отображения в шаблоне</span>
+                        </span>
+                        <input type="text" id="orderNumber" placeholder="Например: LO123456789" oninput="generateEmail()">
+                        <div class="field-hint">Укажите полный номер заказа, включая префикс LO при необходимости</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pvzAddress">Адрес ПВЗ:</label>
+                        <span class="tooltip">ℹ️
+                            <span class="tooltip-text">Укажите полный адрес пункта выдачи заказов, включая город</span>
+                        </span>
+                        <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
+                        <div class="field-hint">Введите полный адрес включая город, улицу, дом и другие важные детали</div>
+                    </div>
+                    
+                    <!-- Динамические поля, которые будут меняться в зависимости от выбранного шаблона -->
+                    <div id="dynamicFields" class="dynamic-fields"></div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="pvzAddress">Адрес ПВЗ:</label>
-                    <input type="text" id="pvzAddress" placeholder="Например: г. Москва, ул. Примерная, д. 123" oninput="generateEmail()">
+                <!-- Секция создания нового шаблона -->
+                <div class="tab-content" id="createTab" style="display:none;">
+                    <div class="form-group">
+                        <label for="newTemplateName">Название шаблона:</label>
+                        <input type="text" id="newTemplateName" placeholder="Например: Запрос видео при краже">
+                        <div class="field-hint">Укажите краткое, но информативное название для быстрого поиска</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newTemplateCategory">Категория:</label>
+                        <select id="newTemplateCategory">
+                            <option value="Проблемы с отгрузкой">Проблемы с отгрузкой</option>
+                            <option value="Проблемы с приемкой">Проблемы с приемкой</option>
+                            <option value="Проблемы с выдачей">Проблемы с выдачей</option>
+                            <option value="Запросы видео">Запросы видео</option>
+                            <option value="Запросы документов">Запросы документов</option>
+                            <option value="Прочие запросы">Прочие запросы</option>
+                            <option value="new-category">+ Новая категория</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="newCategoryGroup" style="display: none;">
+                        <label for="newCategory">Новая категория:</label>
+                        <input type="text" id="newCategory" placeholder="Название новой категории">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newTemplateText">Текст шаблона:</label>
+                        <span class="tooltip">ℹ️
+                            <span class="tooltip-text">Используйте переменные {{orderNumber}} и {{pvzAddress}} для подстановки данных. Для дополнительных полей создайте переменные в формате {{имяПеременной}}</span>
+                        </span>
+                        <textarea id="newTemplateText" class="input" placeholder="Введите текст шаблона письма. Используйте {{orderNumber}} и {{pvzAddress}} для автоматической подстановки."></textarea>
+                        <div class="field-hint">Доступные переменные: {{orderNumber}}, {{pvzAddress}}, а также любые собственные в формате {{переменная}}</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newTemplateSubject">Тема письма:</label>
+                        <input type="text" id="newTemplateSubject" placeholder="Например: Запрос видео">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <div class="custom-checkbox">
+                                <input type="checkbox" id="includeFooterCheck" checked>
+                                <span class="checkmark"></span>
+                            </div>
+                            Включить стандартную подпись
+                        </label>
+                        <div class="field-hint">Стандартная подпись содержит текст про обязательство отвечать в течение суток</div>
+                    </div>
+                    
+                    <button class="new-template-button" onclick="saveNewTemplate()">
+                        <span class="emoji">💾</span>
+                        <span>Сохранить шаблон</span>
+                    </button>
                 </div>
                 
-                <!-- Динамические поля, которые будут меняться в зависимости от выбранного шаблона -->
-                <div id="dynamicFields" class="dynamic-fields"></div>
+                <!-- Секция управления шаблонами -->
+                <div class="tab-content" id="manageTab" style="display:none;">
+                    <div id="userTemplatesList">
+                        <!-- Список пользовательских шаблонов будет загружен сюда -->
+                    </div>
+                </div>
             </div>
             
             <!-- Панель предпросмотра -->
@@ -160,10 +452,14 @@
                 
                 <div id="emailPreview">Выберите шаблон письма и заполните необходимые поля слева, чтобы увидеть результат.</div>
                 
-                <button class="copy-button" onclick="copyEmail()">
-                    <span class="emoji">📋</span>
-                    <span>Скопировать</span>
-                </button>
+                <div class="panel-actions">
+                    <div id="emailSubject" style="color: var(--text-secondary); font-style: italic;"></div>
+                    
+                    <button class="copy-button" onclick="copyEmail()">
+                        <span class="emoji">📋</span>
+                        <span>Скопировать</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -174,115 +470,193 @@
             delay_shipping: {
                 subject: "Задержка отгрузки",
                 text: "Уточните, пожалуйста, по какой причине происходит задержка отгрузки заказа {{orderNumber}} из пункта выдачи по адресу: {{pvzAddress}}.\nСообщите дату отгрузки или пришлите АПП, если он уже был передан курьеру.",
+                category: "Проблемы с отгрузкой",
                 fields: []
             },
             delay_return_shipping: {
                 subject: "Задержка отгрузки на возврат",
                 text: "Уточните, пожалуйста, по какой причине происходит задержка отгрузки возвратного заказа {{orderNumber}} из пункта выдачи по адресу: {{pvzAddress}}. Просьба сообщить когда он будет передан на возврат или пришлите АПП, если раннее был передан курьеру.",
+                category: "Проблемы с отгрузкой",
                 fields: []
             },
             not_accepted: {
                 subject: "Не принят заказ системно",
                 text: "Отправитель сообщил, что передал вам заказ {{orderNumber}} {{dateTime}} в пункте выдачи по адресу: {{pvzAddress}}. Вижу, что системно он не принят. Уточните, пожалуйста, с какой проблемой вы столкнулись при приёмке этого заказа? Просьба принять его системно.",
+                category: "Проблемы с приемкой",
                 fields: [
-                    { id: "dateTime", label: "Дата и время передачи:", placeholder: "Например: 25.03.2025 в 15:30" }
+                    { 
+                        id: "dateTime", 
+                        label: "Дата и время передачи:", 
+                        placeholder: "Например: 25.03.2025 в 15:30",
+                        hint: "Укажите дату и время в любом формате - система автоматически распознает и преобразует его в нужный формат"
+                    }
                 ]
             },
             not_accepting: {
                 subject: "Не принимают заказы на ПВЗ",
                 text: "Покупатель сообщил, что не смог передать вам заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}. Уточните, пожалуйста, с какой проблемой вы столкнулись при приёмке этого заказа?",
+                category: "Проблемы с приемкой",
                 fields: []
             },
             damaged_receiving: {
                 subject: "Заказ поврежден - запрос видео приема",
                 text: "Пользователь сообщил, что получил повреждённый заказ {{orderNumber}}. Заказ был отправлен из пункта выдачи по адресу {{pvzAddress}}. Пришлите, пожалуйста, видео с моментом приема заказа. По данным системы заказ был принят в {{receptionDateTime}}.",
+                category: "Запросы видео",
                 fields: [
-                    { id: "receptionDateTime", label: "Дата и время приема заказа:", placeholder: "Например: 20.03.2025 в 12:45" }
+                    { 
+                        id: "receptionDateTime", 
+                        label: "Дата и время приема заказа:", 
+                        placeholder: "Например: 20.03.2025 в 12:45",
+                        hint: "Укажите дату и время в любом формате - система автоматически распознает и преобразует его"
+                    }
                 ]
             },
             damaged_delivery: {
                 subject: "Заказ поврежден - запрос видео выдачи",
                 text: "Пользователь сообщил, что получил повреждённый заказ {{orderNumber}} в пункте выдачи по адресу {{pvzAddress}}. Пришлите, пожалуйста, видео с моментом выдачи заказа. По данным системы заказ был получен в {{deliveryDateTime}}.",
+                category: "Запросы видео",
                 fields: [
-                    { id: "deliveryDateTime", label: "Дата и время выдачи заказа:", placeholder: "Например: 24.03.2025 в 18:15" }
+                    { 
+                        id: "deliveryDateTime", 
+                        label: "Дата и время выдачи заказа:", 
+                        placeholder: "Например: 24.03.2025 в 18:15",
+                        hint: "Укажите дату и время в любом формате - система преобразует в стандартный формат"
+                    }
                 ]
             },
             mixed_orders: {
                 subject: "Перепутаны заказы",
                 text: "Пришлите, пожалуйста, видео приемки заказа {{orderNumber}} в пункте выдачи по адресу {{pvzAddress}} и видео отгрузки на курьера. По данным системы он был принят в {{receptionDateTime}} и отгружен {{shippingDateTime}}.",
+                category: "Запросы видео",
                 fields: [
-                    { id: "receptionDateTime", label: "Дата и время приема заказа:", placeholder: "Например: 20.03.2025 в 12:45" },
-                    { id: "shippingDateTime", label: "Дата и время отгрузки заказа:", placeholder: "Например: 23.03.2025 в 10:30" }
+                    { 
+                        id: "receptionDateTime", 
+                        label: "Дата и время приема заказа:", 
+                        placeholder: "Например: 20.03.2025 в 12:45",
+                        hint: "Введите в любом формате (20.03.25, 20 марта 12:45, и т.д.)"
+                    },
+                    { 
+                        id: "shippingDateTime", 
+                        label: "Дата и время отгрузки заказа:", 
+                        placeholder: "Например: 23.03.2025 в 10:30",
+                        hint: "Введите в любом формате (23.03.25, 23 марта 10:30, и т.д.)" 
+                    }
                 ]
             },
             request_receipt: {
                 subject: "Запрос чека",
                 text: "Покупатель запросил чек по заказу {{orderNumber}}, который относится к пункту выдачи по адресу: {{pvzAddress}}. Просим прислать электронный чек из ОФД в ответ на это сообщение в течение 24 часов. Убедитесь, пожалуйста, что информация в чеке содержит QR-код и наименование товара.\nВыгрузить нужный чек в Контур.ОФД, Платформа.ОФД и Яндекс.ОФД вам поможет инструкция Как выгрузить чек.pdf",
+                category: "Запросы документов",
                 fields: [],
                 noStandardFooter: true
             },
             how_to_find: {
                 subject: "Как найти ПВЗ",
                 text: "Уточните, пожалуйста, местонахождение вашего пункта выдачи по адресу: {{pvzAddress}}. У покупателя возникли сложности с его поиском. Мы постараемся описать маршрут точнее.",
+                category: "Прочие запросы",
                 fields: [],
                 noStandardFooter: true
             },
             multi_box: {
                 subject: "Многоместный заказ",
                 text: "Покупатель сообщил, что получил не все коробки из заказа {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}. Пришлите, пожалуйста, видео с моментом выдачи заказа. По данным системы заказ был получен в {{deliveryDateTime}}.",
+                category: "Проблемы с выдачей",
                 fields: [
-                    { id: "deliveryDateTime", label: "Дата и время выдачи заказа:", placeholder: "Например: 24.03.2025 в 18:15" }
+                    { 
+                        id: "deliveryDateTime", 
+                        label: "Дата и время выдачи заказа:", 
+                        placeholder: "Например: 24.03.2025 в 18:15",
+                        hint: "Введите в любом удобном формате, система конвертирует автоматически"
+                    }
                 ]
             },
             not_giving: {
                 subject: "Не выдают заказ",
                 text: "Покупатель сообщил, что не смог получить заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}. Уточните, пожалуйста, что произошло при выдаче и где сейчас находится заказ?",
+                category: "Проблемы с выдачей",
                 fields: []
             },
             status_not_delivered: {
                 subject: "Не проставлен статус Доставлен",
                 text: "Покупатель сообщил, что получил заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}, но статус не изменился на «Доставлен». Уточните, пожалуйста, почему вы не провели выдачу заказа в системе?",
+                category: "Проблемы с выдачей",
                 fields: []
             },
             refused_on_spot: {
                 subject: "Отказ от заказа на месте",
                 text: "Покупатель сообщил, что отказался от заказа {{orderNumber}} при получении в пункте выдачи по адресу {{pvzAddress}}. Но сейчас у этого заказа не проставлен статус «Отменён». Уточните, пожалуйста, почему не удалось поменять статус заказа, а также какие упаковки вскрывал покупатель?",
+                category: "Проблемы с выдачей",
                 fields: []
             },
             closed_delivered: {
                 subject: "ПВЗ закрыт, заказ выдан",
                 text: "Покупатель пожаловался, что не смог получить заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}, поскольку он был закрыт {{closedDate}}. Сейчас заказ уже получен.\nНапишите, пожалуйста, по какой причине пункт выдачи был закрыт {{closedDate}}.",
+                category: "Проблемы с выдачей",
                 fields: [
-                    { id: "closedDate", label: "Дата закрытия ПВЗ:", placeholder: "Например: 22.03.2025" }
+                    { 
+                        id: "closedDate", 
+                        label: "Дата закрытия ПВЗ:", 
+                        placeholder: "Например: 22.03.2025", 
+                        hint: "Укажите дату в любом формате (22.03.25, 22 марта, и т.д.)"
+                    }
                 ]
             },
             closed_not_delivered: {
                 subject: "ПВЗ закрыт, заказ не выдан",
                 text: "Покупатель сообщил, что не смог получить заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}, так как он был закрыт {{closedDate}}. Напоминаем, что согласно оферте, ПВЗ должен работать по графику, который указан в Личном кабинете. Уточните, пожалуйста, почему был закрыт пункт выдачи и когда покупатель сможет получить заказ?",
+                category: "Проблемы с выдачей",
                 fields: [
-                    { id: "closedDate", label: "Дата закрытия ПВЗ:", placeholder: "Например: 22.03.2025" }
+                    { 
+                        id: "closedDate", 
+                        label: "Дата закрытия ПВЗ:", 
+                        placeholder: "Например: 22.03.2025",
+                        hint: "Укажите дату в любом формате (22.03.25, 22 марта, и т.д.)" 
+                    }
                 ]
             },
             closed_not_accepted: {
                 subject: "ПВЗ закрыт, заказ не сдали",
                 text: "Покупатель сообщил, что не смог передать вам заказ {{orderNumber}} в пункте выдачи по адресу: {{pvzAddress}}, так как он был закрыт {{closedDate}}. Напоминаем, что согласно оферте, ПВЗ должен работать по графику, который указан в Личном кабинете. Уточните, пожалуйста, почему был закрыт пункт выдачи и когда покупатель сможет получить заказ?",
+                category: "Проблемы с приемкой",
                 fields: [
-                    { id: "closedDate", label: "Дата закрытия ПВЗ:", placeholder: "Например: 22.03.2025" }
+                    { 
+                        id: "closedDate", 
+                        label: "Дата закрытия ПВЗ:", 
+                        placeholder: "Например: 22.03.2025",
+                        hint: "Укажите дату в любом формате (22.03.25, 22 марта, и т.д.)" 
+                    }
                 ]
             },
             request_app: {
                 subject: "Запрос АПП",
                 text: "Заказ {{orderNumber}} из пункта выдачи {{pvzAddress}} не поступил на начальный СЦ. Пожалуйста, пришлите акт приёма-передачи с отгрузкой курьеру за {{shippingDate}}.",
+                category: "Проблемы с отгрузкой",
                 fields: [
-                    { id: "shippingDate", label: "Дата отгрузки:", placeholder: "Например: 20.03.2025" }
+                    { 
+                        id: "shippingDate", 
+                        label: "Дата отгрузки:", 
+                        placeholder: "Например: 20.03.2025",
+                        hint: "Введите дату в любом удобном формате" 
+                    }
                 ]
             },
             need_remarketing: {
                 subject: "Заказ вернулся в точку А - нужна перемаркировка",
                 text: "В пункте выдачи по адресу {{pvzAddress}} находится заказ {{orderNumber}}. Его нужно промаркировать под другой. Для этого необходимо распечатать маркировку с номером {{newOrderNumber}}. Взять коробку и под камерой снять старую маркировку и приклеить ярлык с номером {{newOrderNumber}}. Принять заказ системно. Старый заказ {{orderNumber}} нужно провести, как выданный. Для этого введите код возврата — {{returnCode}}.",
+                category: "Прочие запросы",
                 fields: [
-                    { id: "newOrderNumber", label: "Номер нового заказа:", placeholder: "Например: LO987654321" },
-                    { id: "returnCode", label: "Код возврата:", placeholder: "Например: 12345" }
+                    { 
+                        id: "newOrderNumber", 
+                        label: "Номер нового заказа:", 
+                        placeholder: "Например: LO987654321",
+                        hint: "Укажите полный номер заказа с префиксом LO" 
+                    },
+                    { 
+                        id: "returnCode", 
+                        label: "Код возврата:", 
+                        placeholder: "Например: 12345",
+                        hint: "Только цифры кода возврата" 
+                    }
                 ]
             }
         };
@@ -290,24 +664,174 @@
         // Стандартный текст подписи
         const standardFooter = "\n\nСогласно п. 2.2.10 оферты на запрос службы поддержки нужно отвечать в течение суток. Важно связаться с нами своевременно, чтобы мы смогли учесть ваши аргументы в спорной ситуации. Если не получим от вас ответ в срок, ответственность понесёт ваш пункт выдачи заказов. Например, в случае утери заказов вам придётся возместить продавцу убытки в размере оценочной стоимости товаров.\n\nНе меняйте, пожалуйста, тему сообщения при отправке ответа.";
         
+        // === Функции конвертации даты (аналог Timekonvert.html) ===
+        
+        function convertDate(input) {
+            try {
+                if (!input) return input;
+                
+                input = input.trim();
+                let date, time, day, month, year;
+                
+                // Различные паттерны ввода
+                
+                // 1. HH:mm:ss DD.MM.YY
+                if (/^\d{1,2}:\d{1,2}(:\d{1,2})?\s+\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    const [timePart, datePart] = input.split(/\s+/);
+                    time = timePart.split(':');
+                    [day, month, year] = datePart.split('.');
+                }
+                // 2. DD.MM.YYYY
+                else if (/^\d{1,2}\.\d{1,2}\.\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('.');
+                    time = ["00", "00"];
+                }
+                // 3. DD/MM/YYYY
+                else if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(input)) {
+                    [day, month, year] = input.split('/');
+                    time = ["00", "00"];
+                }
+                // 4. YYYY-MM-DD
+                else if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(input)) {
+                    [year, month, day] = input.split('-');
+                    time = ["00", "00"];
+                }
+                // 5. Словесное описание (например, "4 марта 2025")
+                else if (/^\d{1,2}\s+[а-яА-Я]+(\s+\d{4})?$/.test(input)) {
+                    const parts = input.split(/\s+/);
+                    day = parts[0];
+                    
+                    const monthNames = {
+                        'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
+                        'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
+                        'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
+                    };
+                    
+                    month = monthNames[parts[1].toLowerCase()];
+                    if (!month) {
+                        // Если месяц не распознан, просто возвращаем исходный текст
+                        return input;
+                    }
+                    
+                    year = parts[2] || (new Date()).getFullYear();
+                    time = ["00", "00"];
+                }
+                // 6. Дата со временем в формате "DD месяц в HH:MM"
+                else if (/^\d{1,2}\s+[а-яА-Я]+(\s+\d{4})?\s+в\s+\d{1,2}:\d{1,2}$/.test(input)) {
+                    const mainParts = input.split(/\s+в\s+/);
+                    const datePart = mainParts[0].split(/\s+/);
+                    
+                    day = datePart[0];
+                    
+                    const monthNames = {
+                        'января': '01', 'февраля': '02', 'марта': '03', 'апреля': '04',
+                        'мая': '05', 'июня': '06', 'июля': '07', 'августа': '08',
+                        'сентября': '09', 'октября': '10', 'ноября': '11', 'декабря': '12'
+                    };
+                    
+                    month = monthNames[datePart[1].toLowerCase()];
+                    if (!month) {
+                        return input;
+                    }
+                    
+                    // Если есть год, берем его, иначе текущий год
+                    year = datePart.length > 2 ? datePart[2] : (new Date()).getFullYear();
+                    
+                    // Разбор времени
+                    time = mainParts[1].split(':');
+                }
+                // Если ничего не подошло, пробуем через Date.parse
+                else {
+                    try {
+                        date = new Date(input);
+                        if (isNaN(date.getTime())) {
+                            // Если не удалось распознать дату, возвращаем исходный текст
+                            return input;
+                        }
+                        day = date.getDate();
+                        month = date.getMonth() + 1;
+                        year = date.getFullYear();
+                        time = [date.getHours().toString().padStart(2, '0'), 
+                                date.getMinutes().toString().padStart(2, '0')];
+                    } catch (e) {
+                        return input;
+                    }
+                }
+                
+                // Нормализация года
+                if (year && year.length === 2) {
+                    year = '20' + year;
+                }
+                
+                // Преобразуем строковые значения в числа
+                day = parseInt(day, 10);
+                month = parseInt(month, 10);
+                year = parseInt(year, 10);
+                
+                // Проверка валидности даты
+                if (month < 1 || month > 12 || day < 1 || day > 31) {
+                    return input;
+                }
+                
+                // Создаем объект Date для проверки валидности
+                date = new Date(year, month - 1, day);
+                if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
+                    return input;
+                }
+                
+                const months = [
+                    'января', 'февраля', 'марта', 
+                    'апреля', 'мая', 'июня',
+                    'июля', 'августа', 'сентября', 
+                    'октября', 'ноября', 'декабря'
+                ];
+                
+                // Форматируем результат
+                let formattedDate;
+                if (time && time.length >= 2 && (time[0] !== "00" || time[1] !== "00")) {
+                    formattedDate = `${day} ${months[month-1]} ${year} в ${time[0]}:${time[1]}`;
+                } else {
+                    formattedDate = `${day} ${months[month-1]} ${year}`;
+                }
+                
+                return formattedDate;
+            } catch (e) {
+                console.error(e);
+                return input;
+            }
+        }
+        
+        // === Основные функции для работы генератора ===
+        
         // Функция для обновления динамических полей в зависимости от выбранного шаблона
         function updateDynamicFields() {
             const templateId = document.getElementById("templateSelect").value;
             const dynamicFieldsContainer = document.getElementById("dynamicFields");
+            const emailSubject = document.getElementById("emailSubject");
             
             // Очистка контейнера
             dynamicFieldsContainer.innerHTML = "";
             
-            if (!templateId || !templates[templateId]) {
+            if (!templateId || !getTemplateById(templateId)) {
+                emailSubject.textContent = "";
                 return;
             }
             
+            const template = getTemplateById(templateId);
+            
+            // Отображаем тему письма
+            emailSubject.textContent = "Тема: " + template.subject;
+            
             // Добавление полей из шаблона
-            templates[templateId].fields.forEach(field => {
+            template.fields.forEach(field => {
                 const fieldHtml = `
                     <div class="form-group">
                         <label for="${field.id}">${field.label}</label>
+                        <span class="tooltip">ℹ️
+                            <span class="tooltip-text">Введите в любом формате - система преобразует автоматически</span>
+                        </span>
                         <input type="text" id="${field.id}" placeholder="${field.placeholder}" oninput="generateEmail()">
+                        ${field.hint ? `<div class="field-hint">${field.hint}</div>` : ''}
                     </div>
                 `;
                 dynamicFieldsContainer.innerHTML += fieldHtml;
@@ -317,15 +841,29 @@
             generateEmail();
         }
         
+        // Получение шаблона по ID
+        function getTemplateById(id) {
+            // Сначала ищем среди стандартных шаблонов
+            if (templates[id]) {
+                return templates[id];
+            }
+            
+            // Затем ищем среди пользовательских
+            const userTemplates = getUserTemplates();
+            return userTemplates.find(template => template.id === id);
+        }
+        
         // Функция для генерации письма
         function generateEmail() {
             const templateId = document.getElementById("templateSelect").value;
             const previewContainer = document.getElementById("emailPreview");
             
-            if (!templateId || !templates[templateId]) {
+            if (!templateId || !getTemplateById(templateId)) {
                 previewContainer.textContent = "Выберите шаблон письма и заполните необходимые поля слева, чтобы увидеть результат.";
                 return;
             }
+            
+            const template = getTemplateById(templateId);
             
             // Получаем значения обязательных полей
             const orderNumber = document.getElementById("orderNumber").value || "{{Номер заказа}}";
@@ -333,23 +871,34 @@
             
             // Начинаем формирование текста письма
             let emailText = "Здравствуйте!\n\n";
-            let templateText = templates[templateId].text;
+            let templateText = template.text;
             
             // Подставляем обязательные переменные
             templateText = templateText.replace(/{{orderNumber}}/g, orderNumber);
             templateText = templateText.replace(/{{pvzAddress}}/g, pvzAddress);
             
             // Подставляем динамические переменные
-            templates[templateId].fields.forEach(field => {
-                const fieldValue = document.getElementById(field.id)?.value || `{{${field.label.replace(":", "")}}}`;
-                templateText = templateText.replace(new RegExp(`{{${field.id}}}`, 'g'), fieldValue);
-            });
+            if (template.fields) {
+                template.fields.forEach(field => {
+                    let fieldValue = document.getElementById(field.id)?.value || `{{${field.label.replace(":", "")}}}`;
+                    
+                    // Если это поле даты, пытаемся конвертировать его
+                    if (field.id.toLowerCase().includes("date") || field.id.toLowerCase().includes("time")) {
+                        const convertedDate = convertDate(fieldValue);
+                        if (convertedDate) {
+                            fieldValue = convertedDate;
+                        }
+                    }
+                    
+                    templateText = templateText.replace(new RegExp(`{{${field.id}}}`, 'g'), fieldValue);
+                });
+            }
             
             // Добавляем основной текст
             emailText += templateText;
             
             // Добавляем стандартный футер, если он нужен
-            if (!templates[templateId].noStandardFooter) {
+            if (!template.noStandardFooter) {
                 emailText += standardFooter;
             }
             
@@ -385,6 +934,373 @@
                     alert("Не удалось скопировать текст. Пожалуйста, выделите его вручную и нажмите Ctrl+C.");
                 });
         }
+        
+        // === Функции для работы с пользовательскими шаблонами ===
+        
+        // Получение пользовательских шаблонов из localStorage
+        function getUserTemplates() {
+            const userTemplatesJSON = localStorage.getItem('userTemplates');
+            return userTemplatesJSON ? JSON.parse(userTemplatesJSON) : [];
+        }
+        
+        // Сохранение пользовательских шаблонов в localStorage
+        function saveUserTemplates(templates) {
+            localStorage.setItem('userTemplates', JSON.stringify(templates));
+        }
+        
+        // Сохранение нового шаблона
+        function saveNewTemplate() {
+            const name = document.getElementById("newTemplateName").value.trim();
+            let category = document.getElementById("newTemplateCategory").value;
+            const text = document.getElementById("newTemplateText").value.trim();
+            const subject = document.getElementById("newTemplateSubject").value.trim();
+            const includeFooter = document.getElementById("includeFooterCheck").checked;
+            
+            // Проверка на заполненность полей
+            if (!name || !text || !subject) {
+                alert("Пожалуйста, заполните все поля!");
+                return;
+            }
+            
+            // Если выбрана новая категория, берем ее значение
+            if (category === "new-category") {
+                category = document.getElementById("newCategory").value.trim();
+                if (!category) {
+                    alert("Пожалуйста, укажите название новой категории!");
+                    return;
+                }
+            }
+            
+            // Генерируем ID для шаблона
+            const id = "custom_" + Date.now();
+            
+            // Находим переменные в тексте шаблона
+            const variableRegex = /{{([^{}]+)}}/g;
+            const matches = [...text.matchAll(variableRegex)];
+            
+            // Создаем список полей на основе найденных переменных
+            const fields = [];
+            const usedFieldIds = new Set(["orderNumber", "pvzAddress"]);
+            
+            matches.forEach(match => {
+                const variableName = match[1];
+                if (!usedFieldIds.has(variableName)) {
+                    usedFieldIds.add(variableName);
+                    fields.push({
+                        id: variableName,
+                        label: variableName.charAt(0).toUpperCase() + variableName.slice(1) + ":",
+                        placeholder: `Введите ${variableName}`,
+                        hint: `Заполните поле ${variableName} для подстановки в шаблон`
+                    });
+                }
+            });
+            
+            // Создаем новый шаблон
+            const newTemplate = {
+                id,
+                name,
+                subject,
+                text,
+                category,
+                fields,
+                isCustom: true,
+                noStandardFooter: !includeFooter
+            };
+            
+            // Получаем существующие шаблоны и добавляем новый
+            const userTemplates = getUserTemplates();
+            userTemplates.push(newTemplate);
+            saveUserTemplates(userTemplates);
+            
+            // Обновляем список шаблонов в выпадающем списке
+            updateCustomTemplatesDropdown();
+            
+            // Очищаем форму создания шаблона
+            document.getElementById("newTemplateName").value = "";
+            document.getElementById("newTemplateCategory").value = "Прочие запросы";
+            document.getElementById("newTemplateText").value = "";
+            document.getElementById("newTemplateSubject").value = "";
+            document.getElementById("includeFooterCheck").checked = true;
+            
+            // Показываем сообщение об успешном сохранении
+            alert("Шаблон успешно сохранен!");
+            
+            // Переключаемся на вкладку с шаблонами
+            switchTab('templates');
+        }
+        
+        // Обновление выпадающего списка с пользовательскими шаблонами
+        function updateCustomTemplatesDropdown() {
+            const userTemplates = getUserTemplates();
+            const customTemplatesGroup = document.getElementById("customTemplates");
+            
+            // Очищаем существующие пользовательские шаблоны
+            customTemplatesGroup.innerHTML = "";
+            
+            // Группируем пользовательские шаблоны по категориям
+            const categories = {};
+            userTemplates.forEach(template => {
+                if (!categories[template.category]) {
+                    categories[template.category] = [];
+                }
+                categories[template.category].push(template);
+            });
+            
+            // Добавляем шаблоны, сгруппированные по категориям
+            Object.keys(categories).forEach(category => {
+                const categoryOptgroup = document.createElement("optgroup");
+                categoryOptgroup.label = `${category} (пользовательские)`;
+                
+                categories[category].forEach(template => {
+                    const option = document.createElement("option");
+                    option.value = template.id;
+                    option.textContent = template.name;
+                    categoryOptgroup.appendChild(option);
+                });
+                
+                customTemplatesGroup.appendChild(categoryOptgroup);
+            });
+            
+            // Также обновляем список шаблонов на вкладке управления
+            updateUserTemplatesList();
+        }
+        
+        // Обновление списка пользовательских шаблонов на вкладке управления
+        function updateUserTemplatesList() {
+            const userTemplates = getUserTemplates();
+            const userTemplatesList = document.getElementById("userTemplatesList");
+            
+            if (userTemplates.length === 0) {
+                userTemplatesList.innerHTML = "<p style='color: var(--text-secondary); text-align: center; padding: 20px;'>У вас пока нет сохраненных шаблонов.</p>";
+                return;
+            }
+            
+            // Группируем шаблоны по категориям
+            const categories = {};
+            userTemplates.forEach(template => {
+                if (!categories[template.category]) {
+                    categories[template.category] = [];
+                }
+                categories[template.category].push(template);
+            });
+            
+            // Формируем HTML для списка шаблонов
+            let html = "";
+            
+            Object.keys(categories).sort().forEach(category => {
+                html += `<div class="template-category">
+                    <div class="category-name">${category}</div>
+                    <div class="category-templates">`;
+                
+                categories[category].forEach(template => {
+                    html += `
+                        <div class="template-item" data-id="${template.id}">
+                            <div class="template-name">${template.name}</div>
+                            <div class="template-subject">Тема: ${template.subject}</div>
+                            <div class="template-action-buttons">
+                                <button class="action-button edit" onclick="editTemplate('${template.id}')">✏️ Редактировать</button>
+                                <button class="action-button delete" onclick="deleteTemplate('${template.id}')">🗑️ Удалить</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div></div>`;
+            });
+            
+            userTemplatesList.innerHTML = html;
+        }
+        
+        // Удаление шаблона
+        function deleteTemplate(id) {
+            if (confirm("Вы уверены, что хотите удалить этот шаблон?")) {
+                const userTemplates = getUserTemplates();
+                const updatedTemplates = userTemplates.filter(template => template.id !== id);
+                saveUserTemplates(updatedTemplates);
+                
+                // Обновляем интерфейс
+                updateCustomTemplatesDropdown();
+                
+                // Если текущий выбранный шаблон - это удаляемый шаблон, сбрасываем выбор
+                if (document.getElementById("templateSelect").value === id) {
+                    document.getElementById("templateSelect").value = "";
+                    document.getElementById("emailPreview").textContent = "Выберите шаблон письма и заполните необходимые поля слева, чтобы увидеть результат.";
+                    document.getElementById("dynamicFields").innerHTML = "";
+                }
+            }
+        }
+        
+        // Редактирование шаблона
+        function editTemplate(id) {
+            const userTemplates = getUserTemplates();
+            const template = userTemplates.find(t => t.id === id);
+            
+            if (!template) {
+                alert("Шаблон не найден!");
+                return;
+            }
+            
+            // Переключаемся на вкладку создания
+            switchTab('create');
+            
+            // Заполняем форму данными шаблона
+            document.getElementById("newTemplateName").value = template.name;
+            document.getElementById("newTemplateCategory").value = template.category;
+            document.getElementById("newTemplateText").value = template.text;
+            document.getElementById("newTemplateSubject").value = template.subject;
+            document.getElementById("includeFooterCheck").checked = !template.noStandardFooter;
+            
+            // Добавляем скрытое поле для ID редактируемого шаблона
+            let editIdField = document.getElementById("editTemplateId");
+            if (!editIdField) {
+                editIdField = document.createElement("input");
+                editIdField.type = "hidden";
+                editIdField.id = "editTemplateId";
+                document.querySelector("#createTab").appendChild(editIdField);
+            }
+            editIdField.value = id;
+            
+            // Меняем текст кнопки на "Обновить шаблон"
+            document.querySelector(".new-template-button").innerHTML = `
+                <span class="emoji">💾</span>
+                <span>Обновить шаблон</span>
+            `;
+            
+            // Меняем функцию на обновление
+            document.querySelector(".new-template-button").onclick = updateExistingTemplate;
+        }
+        
+        // Обновление существующего шаблона
+        function updateExistingTemplate() {
+            const id = document.getElementById("editTemplateId").value;
+            const name = document.getElementById("newTemplateName").value.trim();
+            let category = document.getElementById("newTemplateCategory").value;
+            const text = document.getElementById("newTemplateText").value.trim();
+            const subject = document.getElementById("newTemplateSubject").value.trim();
+            const includeFooter = document.getElementById("includeFooterCheck").checked;
+            
+            // Проверка на заполненность полей
+            if (!name || !text || !subject) {
+                alert("Пожалуйста, заполните все поля!");
+                return;
+            }
+            
+            // Если выбрана новая категория, берем ее значение
+            if (category === "new-category") {
+                category = document.getElementById("newCategory").value.trim();
+                if (!category) {
+                    alert("Пожалуйста, укажите название новой категории!");
+                    return;
+                }
+            }
+            
+            // Находим переменные в тексте шаблона
+            const variableRegex = /{{([^{}]+)}}/g;
+            const matches = [...text.matchAll(variableRegex)];
+            
+            // Создаем список полей на основе найденных переменных
+            const fields = [];
+            const usedFieldIds = new Set(["orderNumber", "pvzAddress"]);
+            
+            matches.forEach(match => {
+                const variableName = match[1];
+                if (!usedFieldIds.has(variableName)) {
+                    usedFieldIds.add(variableName);
+                    fields.push({
+                        id: variableName,
+                        label: variableName.charAt(0).toUpperCase() + variableName.slice(1) + ":",
+                        placeholder: `Введите ${variableName}`,
+                        hint: `Заполните поле ${variableName} для подстановки в шаблон`
+                    });
+                }
+            });
+            
+            // Обновляем шаблон
+            const userTemplates = getUserTemplates();
+            const templateIndex = userTemplates.findIndex(t => t.id === id);
+            
+            if (templateIndex === -1) {
+                alert("Шаблон не найден!");
+                return;
+            }
+            
+            userTemplates[templateIndex] = {
+                ...userTemplates[templateIndex],
+                name,
+                subject,
+                text,
+                category,
+                fields,
+                noStandardFooter: !includeFooter
+            };
+            
+            saveUserTemplates(userTemplates);
+            
+            // Обновляем список шаблонов в выпадающем списке
+            updateCustomTemplatesDropdown();
+            
+            // Очищаем форму создания шаблона
+            document.getElementById("newTemplateName").value = "";
+            document.getElementById("newTemplateCategory").value = "Прочие запросы";
+            document.getElementById("newTemplateText").value = "";
+            document.getElementById("newTemplateSubject").value = "";
+            document.getElementById("includeFooterCheck").checked = true;
+            document.getElementById("editTemplateId").value = "";
+            
+            // Восстанавливаем кнопку и функцию
+            document.querySelector(".new-template-button").innerHTML = `
+                <span class="emoji">💾</span>
+                <span>Сохранить шаблон</span>
+            `;
+            document.querySelector(".new-template-button").onclick = saveNewTemplate;
+            
+            // Показываем сообщение об успешном обновлении
+            alert("Шаблон успешно обновлен!");
+            
+            // Переключаемся на вкладку управления
+            switchTab('manage');
+        }
+        
+        // Переключение между вкладками
+        function switchTab(tabId) {
+            // Скрываем все вкладки
+            document.querySelectorAll(".tab-content").forEach(tab => {
+                tab.style.display = "none";
+            });
+            
+            // Показываем выбранную вкладку
+            document.getElementById(tabId + "Tab").style.display = "block";
+            
+            // Обновляем активную кнопку
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.classList.remove("active");
+                if (tab.dataset.tab === tabId) {
+                    tab.classList.add("active");
+                }
+            });
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener("DOMContentLoaded", function() {
+            // Добавляем обработчики для вкладок
+            document.querySelectorAll(".tab").forEach(tab => {
+                tab.addEventListener("click", function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+            
+            // Обработчик для новой категории
+            document.getElementById("newTemplateCategory").addEventListener("change", function() {
+                if (this.value === "new-category") {
+                    document.getElementById("newCategoryGroup").style.display = "block";
+                } else {
+                    document.getElementById("newCategoryGroup").style.display = "none";
+                }
+            });
+            
+            // Загружаем пользовательские шаблоны
+            updateCustomTemplatesDropdown();
+        });
     </script>
 </body>
 </html>
